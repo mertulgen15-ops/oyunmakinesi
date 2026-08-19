@@ -291,7 +291,7 @@ footer { background: var(--card-bg); text-align: center; padding: 30px; margin-t
 </div>
 </section>
 
-<footer>© 2026 GAME ATARİ • Mobil & PC Platformu</footer>
+<footer>© 2026 mert TOSTMAKİNESİ TV GAME ATARİ • Mobil & PC Platformu</footer>
 
 <script>
 function showPage(page) {
@@ -413,13 +413,13 @@ let tekkenCharColors = {
     '2': { name: 'Mavi Ninja', skin: '#ffdbac', suit: '#3498db' },
     '3': { name: 'Yeşil Komando', skin: '#8d5524', suit: '#2ecc71' }
 };
-let tekkenPlayer = { x: 150, y: 220, width: 45, height: 110, speed: 5, charId: '1', isAttacking: false, hp: 100 };
-let tekkenEnemy = { x: 500, y: 220, width: 45, height: 110, hp: 100 };
+let tekkenPlayer = { x: 150, y: 220, width: 45, height: 110, speed: 5, charId: '1', isAttacking: false, hp: 100, hitFlash: 0 };
+let tekkenEnemy = { x: 500, y: 220, width: 45, height: 110, hp: 100, attackTimer: 0, isAttacking: false, hitFlash: 0 };
 
 let gunGame = { crosshairX: 350, crosshairY: 200, score: 0, targets: [], spawnTimer: 0 };
 let runnerGame = { x: 100, y: 270, vy: 0, isJumping: false, score: 0, obstacles: [], timer: 0 };
 let basketGame = { ballX: 350, ballY: 300, isShot: false, vx: 0, vy: 0, score: 0, hoopX: 350 };
-let motoGame = { x: 150, y: 280, vy: 0, isJumping: false, score: 0, obstacles: [], timer: 0 };
+let motoGame = { x: 320, score: 0, obstacles: [], timer: 0, speed: 5.5, roadOffset: 0, gameOver: false };
 let weightGame = { liftY: 280, weight: 50, score: 0, taps: 0, targetTaps: 15, timer: 100, status: "playing" };
 let spaceGame = { shipX: 350, bullets: [], enemies: [], score: 0, timer: 0 };
 let heliGame = { heliY: 200, vy: 0, obstacles: [], score: 0, timer: 0 };
@@ -485,7 +485,7 @@ function startGame(type) {
         document.getElementById("gameTitle").textContent = "🏀 2D BASKETBOL ATIŞI";
         document.getElementById("gameInfo").textContent = "[VURUŞ] tuşuna basarak potaya şut at!";
     } else if (type === "moto") {
-        motoGame.x = 150; motoGame.y = 280; motoGame.vy = 0; motoGame.isJumping = false; motoGame.score = 0; motoGame.obstacles = [];
+        motoGame.x=320; motoGame.score=0; motoGame.obstacles=[]; motoGame.timer=0; motoGame.roadOffset=0; motoGame.gameOver=false;
         document.getElementById("gameTitle").textContent = "🏍️ 2D MOTOSİKLET YARIŞI";
         document.getElementById("gameInfo").textContent = "[VURUŞ] ile zıpla!";
     } else if (type === "weight") {
@@ -497,7 +497,7 @@ function startGame(type) {
         document.getElementById("gameTitle").textContent = "🚀 2D UZAY SAVAŞÇISI";
         document.getElementById("gameInfo").textContent = "Sol/Sağ ile hareket et, [VURUŞ] ile ateş et!";
     } else if (type === "heli") {
-        heliGame.heliY = 200; heliGame.vy = 0; heliGame.obstacles = []; heliGame.score = 0;
+        heliGame.heliY = 200; heliGame.vy = 0; heliGame.obstacles = []; heliGame.score = 0; heliGame.crashed = false;
         document.getElementById("gameTitle").textContent = "🚁 2D HELİKOPTER KAÇIŞ";
         document.getElementById("gameInfo").textContent = "[VURUŞ] ile yukarı süzül!";
     }
@@ -773,42 +773,245 @@ function drawKnight() {
 
 function updateTekken() {
     if (tekkenStep === "map_select") {
-        for (let i = 1; i <= 5; i++) { if (keys[i.toString()]) { selectedTekkenMap = i.toString(); tekkenStep = "char_select"; keys[i.toString()] = false; break; } }
+        for (let i = 1; i <= 5; i++) {
+            if (keys[i.toString()]) {
+                selectedTekkenMap = i.toString();
+                tekkenStep = "char_select";
+                keys[i.toString()] = false;
+                break;
+            }
+        }
         return;
     }
+
     if (tekkenStep === "char_select") {
-        for (let i = 1; i <= 3; i++) { if (keys[i.toString()]) { tekkenPlayer.charId = i.toString(); tekkenStep = "playing"; keys[i.toString()] = false; break; } }
+        for (let i = 1; i <= 3; i++) {
+            if (keys[i.toString()]) {
+                tekkenPlayer.charId = i.toString();
+                tekkenStep = "playing";
+                keys[i.toString()] = false;
+                tekkenEnemy.attackTimer = 0;
+                tekkenEnemy.isAttacking = false;
+                break;
+            }
+        }
         return;
     }
+
     if (tekkenStep === "playing" && tekkenPlayer.hp > 0 && tekkenEnemy.hp > 0) {
         if (keys['ArrowLeft']) tekkenPlayer.x -= 5;
         if (keys['ArrowRight']) tekkenPlayer.x += 5;
+        tekkenPlayer.x = Math.max(60, Math.min(640, tekkenPlayer.x));
+
+        // Oyuncunun vuruşu
         if (keys[' '] && !tekkenPlayer.isAttacking) {
             tekkenPlayer.isAttacking = true;
             setTimeout(() => { tekkenPlayer.isAttacking = false; }, 250);
-            if (Math.abs(tekkenPlayer.x - tekkenEnemy.x) < 65) tekkenEnemy.hp -= 15;
+
+            if (Math.abs(tekkenPlayer.x - tekkenEnemy.x) < 75) {
+                tekkenEnemy.hp -= 15;
+                tekkenEnemy.hitFlash = 8;
+            }
             keys[' '] = false;
         }
+
+        // Rakip yaklaşır ve karşılık olarak saldırır
+        const distance = tekkenPlayer.x - tekkenEnemy.x;
+        if (Math.abs(distance) > 75) {
+            tekkenEnemy.x += distance > 0 ? 2.2 : -2.2;
+        }
+
+        tekkenEnemy.attackTimer++;
+        if (Math.abs(distance) < 82 && tekkenEnemy.attackTimer > 55 && !tekkenEnemy.isAttacking) {
+            tekkenEnemy.isAttacking = true;
+            tekkenEnemy.attackTimer = 0;
+
+            setTimeout(() => {
+                if (tekkenStep === "playing" &&
+                    tekkenPlayer.hp > 0 &&
+                    Math.abs(tekkenPlayer.x - tekkenEnemy.x) < 90) {
+                    tekkenPlayer.hp -= 10;
+                    tekkenPlayer.hitFlash = 8;
+                }
+                tekkenEnemy.isAttacking = false;
+            }, 160);
+        }
+
+        tekkenEnemy.x = Math.max(60, Math.min(640, tekkenEnemy.x));
     } else if ((tekkenPlayer.hp <= 0 || tekkenEnemy.hp <= 0) && keys[' ']) {
-        tekkenStep = "map_select"; tekkenPlayer.hp = 100; tekkenEnemy.hp = 100; keys[' '] = false;
+        tekkenStep = "map_select";
+        tekkenPlayer.hp = 100;
+        tekkenEnemy.hp = 100;
+        tekkenEnemy.attackTimer = 0;
+        keys[' '] = false;
     }
+}
+
+function drawFighter(x, y, suit, skin, attacking, facing, hitFlash) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(facing, 1);
+
+    if (hitFlash > 0 && Math.floor(hitFlash / 2) % 2 === 0) {
+        ctx.globalAlpha = 0.55;
+    }
+
+    // Gölge
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.beginPath();
+    ctx.ellipse(0, 88, 35, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Bacaklar
+    ctx.strokeStyle = "#18202a";
+    ctx.lineWidth = 13;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(-8, 48); ctx.lineTo(-15, 82);
+    ctx.moveTo(8, 48); ctx.lineTo(17, 82);
+    ctx.stroke();
+
+    // Ayakkabılar
+    ctx.strokeStyle = "#050505";
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.moveTo(-15, 82); ctx.lineTo(-28, 84);
+    ctx.moveTo(17, 82); ctx.lineTo(30, 84);
+    ctx.stroke();
+
+    // Gövde
+    ctx.fillStyle = suit;
+    ctx.beginPath();
+    ctx.roundRect(-22, 0, 44, 53, 10);
+    ctx.fill();
+
+    // Boyun + kafa
+    ctx.fillStyle = skin;
+    ctx.fillRect(-7, -8, 14, 13);
+    ctx.beginPath();
+    ctx.arc(0, -24, 19, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Saç
+    ctx.fillStyle = "#202020";
+    ctx.beginPath();
+    ctx.arc(0, -29, 19, Math.PI, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(-17, -30, 34, 8);
+
+    // Göz ve yüz
+    ctx.fillStyle = "#111";
+    ctx.beginPath();
+    ctx.arc(6, -24, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#7a3f2a";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(5, -18, 6, 0.1, 1.0);
+    ctx.stroke();
+
+    // Kollar
+    ctx.strokeStyle = skin;
+    ctx.lineWidth = 12;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(-18, 10); ctx.lineTo(-34, 40);
+    ctx.stroke();
+
+    ctx.beginPath();
+    if (attacking) {
+        ctx.moveTo(18, 10); ctx.lineTo(52, 5);
+    } else {
+        ctx.moveTo(18, 10); ctx.lineTo(34, 40);
+    }
+    ctx.stroke();
+
+    // Eller
+    ctx.fillStyle = skin;
+    ctx.beginPath();
+    ctx.arc(attacking ? 52 : 34, attacking ? 5 : 40, 7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Kıyafet detayları
+    ctx.fillStyle = "rgba(255,255,255,0.22)";
+    ctx.fillRect(-4, 5, 8, 38);
+
+    ctx.restore();
 }
 function drawTekken() {
     if (tekkenStep === "map_select" || tekkenStep === "char_select") {
-        ctx.fillStyle = "#111"; ctx.fillRect(0, 0, 700, 400);
-        ctx.fillStyle = "#fff"; ctx.font = "bold 20px Arial"; ctx.textAlign = "center";
-        ctx.fillText(tekkenStep === "map_select" ? "ARENA SEÇ (1 - 5)" : "KARAKTER SEÇ (1 - 3)", 350, 70);
+        ctx.fillStyle = "#111";
+        ctx.fillRect(0, 0, 700, 400);
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 20px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(
+            tekkenStep === "map_select" ? "ARENA SEÇ (1 - 5)" : "KARAKTER SEÇ (1 - 3)",
+            350, 70
+        );
         let list = tekkenStep === "map_select" ? tekkenMaps : tekkenCharColors;
-        let idx = 1; for (let id in list) { ctx.fillText(`[${id}] ${list[id].name}`, 350, 110 + (idx++ * 45)); }
+        let idx = 1;
+        for (let id in list) {
+            ctx.fillText(`[${id}] ${list[id].name}`, 350, 110 + (idx++ * 45));
+        }
         ctx.textAlign = "left";
         return;
     }
+
     let map = tekkenMaps[selectedTekkenMap];
-    ctx.fillStyle = map.bg; ctx.fillRect(0, 0, 700, 400);
-    ctx.fillStyle = map.floor; ctx.fillRect(0, 310, 700, 90);
-    ctx.fillStyle = tekkenCharColors[tekkenPlayer.charId].suit; ctx.fillRect(tekkenPlayer.x - 12, 224, 24, 55);
-    ctx.fillStyle = "#c0392b"; ctx.fillRect(tekkenEnemy.x - 12, 224, 24, 55);
-    ctx.fillStyle = "#2ecc71"; ctx.fillRect(30, 20, (tekkenPlayer.hp / 100) * 220, 20);
+    ctx.fillStyle = map.bg;
+    ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = map.floor;
+    ctx.fillRect(0, 310, 700, 90);
+
+    // Arena ışıkları
+    ctx.fillStyle = "rgba(255,255,255,0.08)";
+    ctx.fillRect(0, 90, 700, 4);
+    ctx.fillRect(0, 180, 700, 3);
+
+    let playerColors = tekkenCharColors[tekkenPlayer.charId];
+    drawFighter(
+        tekkenPlayer.x, 225,
+        playerColors.suit, playerColors.skin,
+        tekkenPlayer.isAttacking, 1, tekkenPlayer.hitFlash || 0
+    );
+    drawFighter(
+        tekkenEnemy.x, 225,
+        "#c0392b", "#c68642",
+        tekkenEnemy.isAttacking, -1, tekkenEnemy.hitFlash || 0
+    );
+
+    if (tekkenPlayer.hitFlash > 0) tekkenPlayer.hitFlash--;
+    if (tekkenEnemy.hitFlash > 0) tekkenEnemy.hitFlash--;
+
+    // Can barları
+    ctx.fillStyle = "#111";
+    ctx.fillRect(25, 20, 250, 24);
+    ctx.fillRect(425, 20, 250, 24);
+    ctx.fillStyle = "#2ecc71";
+    ctx.fillRect(25, 20, Math.max(0, tekkenPlayer.hp) * 2.5, 24);
+    ctx.fillStyle = "#e74c3c";
+    ctx.fillRect(425, 20, Math.max(0, tekkenEnemy.hp) * 2.5, 24);
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 15px Arial";
+    ctx.fillText("SEN", 35, 38);
+    ctx.textAlign = "right";
+    ctx.fillText("RAKİP", 665, 38);
+    ctx.textAlign = "left";
+
+    if (tekkenPlayer.hp <= 0 || tekkenEnemy.hp <= 0) {
+        ctx.fillStyle = "rgba(0,0,0,0.82)";
+        ctx.fillRect(130, 105, 440, 180);
+        ctx.fillStyle = tekkenEnemy.hp <= 0 ? "#2ecc71" : "#e74c3c";
+        ctx.font = "bold 34px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(tekkenEnemy.hp <= 0 ? "KAZANDIN!" : "KAYBETTİN!", 350, 170);
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 17px Arial";
+        ctx.fillText("Yeniden başlamak için VURUŞ'a bas", 350, 225);
+        ctx.textAlign = "left";
+    }
 }
 
 function updateGunGame() {
@@ -909,93 +1112,270 @@ function drawBasket() {
 }
 
 function updateMoto() {
-    motoGame.timer++;
-    if ((keys[' '] || keys['ArrowUp']) && !motoGame.isJumping) {
-        motoGame.vy = -10; motoGame.isJumping = true; keys[' '] = false; keys['ArrowUp'] = false;
-    }
-    motoGame.y += motoGame.vy; motoGame.vy += 0.5;
-    if (motoGame.y > 280) { motoGame.y = 280; motoGame.isJumping = false; }
-    if (motoGame.timer % 55 === 0) motoGame.obstacles.push({ x: 700, y: 295 });
-    for (let i = motoGame.obstacles.length - 1; i >= 0; i--) {
-        motoGame.obstacles[i].x -= 6;
-        if (motoGame.obstacles[i].x < -30) { motoGame.obstacles.splice(i, 1); motoGame.score += 20; }
-    }
+    if (motoGame.gameOver) { if (keys[' ']) { motoGame.x=320; motoGame.score=0; motoGame.obstacles=[]; motoGame.timer=0; motoGame.roadOffset=0; motoGame.gameOver=false; keys[' ']=false; } return; }
+    if (keys['ArrowLeft']) motoGame.x-=7; if (keys['ArrowRight']) motoGame.x+=7; motoGame.x=Math.max(195,Math.min(455,motoGame.x));
+    motoGame.timer++; motoGame.roadOffset=(motoGame.roadOffset+motoGame.speed)%50;
+    if(motoGame.timer>30){motoGame.timer=0;const types=['car','police','taxi','truck'];const type=types[Math.floor(Math.random()*types.length)];const laneX=[205,310,420][Math.floor(Math.random()*3)];motoGame.obstacles.push({x:laneX,y:-100,type:type,speed:Math.random()*1.5+3.5});}
+    for(let i=motoGame.obstacles.length-1;i>=0;i--){const obs=motoGame.obstacles[i];obs.y+=motoGame.speed+obs.speed-3;if(obs.y>410){motoGame.obstacles.splice(i,1);motoGame.score+=25;continue;}if(obs.y>225&&obs.y<350&&Math.abs(motoGame.x-obs.x)<38)motoGame.gameOver=true;}
 }
-function drawMoto() {
-    ctx.fillStyle = "#34495e"; ctx.fillRect(0, 0, 700, 400);
-    ctx.fillStyle = "#111"; ctx.fillRect(0, 320, 700, 80);
-    ctx.fillStyle = "#e74c3c"; ctx.fillRect(motoGame.x - 20, motoGame.y - 15, 40, 20);
-    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(motoGame.x - 12, motoGame.y + 5, 8, 0, Math.PI * 2); ctx.arc(motoGame.x + 12, motoGame.y + 5, 8, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#f1c40f";
-    for (let obs of motoGame.obstacles) { ctx.fillRect(obs.x, obs.y - 15, 20, 25); }
-    ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial"; ctx.fillText("Skor: " + motoGame.score, 25, 35);
+function drawMoto(){
+    ctx.fillStyle='#17202a';ctx.fillRect(0,0,700,400);ctx.fillStyle='#34495e';ctx.fillRect(170,0,360,400);ctx.strokeStyle='#f1c40f';ctx.lineWidth=4;ctx.setLineDash([25,25]);ctx.lineDashOffset=-motoGame.roadOffset;ctx.beginPath();ctx.moveTo(280,0);ctx.lineTo(280,400);ctx.stroke();ctx.beginPath();ctx.moveTo(390,0);ctx.lineTo(390,400);ctx.stroke();ctx.setLineDash([]);
+    for(let obs of motoGame.obstacles){ctx.save();ctx.translate(obs.x,obs.y);if(obs.type==='police'){ctx.fillStyle='#111';ctx.fillRect(-20,0,40,70);ctx.fillStyle='#eee';ctx.fillRect(-15,20,30,30);ctx.fillStyle='#263746';ctx.fillRect(-13,23,26,18);ctx.fillStyle=(Math.floor(Date.now()/120)%2===0)?'#3498db':'#e74c3c';ctx.fillRect(-6,10,12,6);}else if(obs.type==='taxi'){ctx.fillStyle='#f1c40f';ctx.fillRect(-20,0,40,70);ctx.fillStyle='#222';ctx.fillRect(-15,12,30,20);ctx.fillStyle='#fff';ctx.fillRect(-10,-7,20,7);}else if(obs.type==='truck'){ctx.fillStyle='#7f8c8d';ctx.fillRect(-23,0,46,100);ctx.fillStyle='#e67e22';ctx.fillRect(-20,10,40,25);ctx.fillStyle='#b8e6ff';ctx.fillRect(-17,40,34,20);}else{ctx.fillStyle='#e74c3c';ctx.fillRect(-20,0,40,70);ctx.fillStyle='#222';ctx.fillRect(-15,15,30,20);ctx.fillStyle='#9bdcff';ctx.fillRect(-12,18,24,12);}ctx.fillStyle='#111';ctx.fillRect(-25,8,5,15);ctx.fillRect(20,8,5,15);ctx.fillRect(-25,48,5,15);ctx.fillRect(20,48,5,15);ctx.restore();}
+    ctx.save();ctx.translate(motoGame.x,315);ctx.fillStyle='#111';ctx.beginPath();ctx.arc(-17,28,10,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(17,28,10,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#e74c3c';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(-17,20);ctx.lineTo(5,5);ctx.lineTo(17,20);ctx.stroke();ctx.fillStyle='#e74c3c';ctx.fillRect(-7,2,22,9);ctx.fillStyle='#3498db';ctx.beginPath();ctx.arc(5,-10,9,0,Math.PI*2);ctx.fill();ctx.fillStyle='#263238';ctx.fillRect(-3,-2,15,18);ctx.restore();
+    ctx.fillStyle='#fff';ctx.font='bold 16px Arial';ctx.fillText('Puan / Mesafe: '+motoGame.score,20,30);if(motoGame.gameOver){ctx.fillStyle='rgba(0,0,0,.85)';ctx.fillRect(150,120,400,160);ctx.fillStyle='#e74c3c';ctx.font='bold 30px Arial';ctx.textAlign='center';ctx.fillText('💥 KAZA YAPTIN!',350,170);ctx.fillStyle='#fff';ctx.font='bold 16px Arial';ctx.fillText('Tekrar oynamak için [VURUŞ] tuşuna bas',350,220);ctx.textAlign='left';}
 }
 
 function updateWeight() {
-    if (keys[' ']) {
-        weightGame.taps++;
-        weightGame.liftY = Math.max(80, 280 - (weightGame.taps * 8));
-        keys[' '] = false;
-    }
-    weightGame.timer--;
-    if (weightGame.timer <= 0) {
-        if (weightGame.taps >= weightGame.targetTaps) { weightGame.score += 50; weightGame.status = "success"; }
-        else { weightGame.status = "fail"; }
-    }
+    if(weightGame.status!=='playing'){if(keys[' ']){weightGame.taps=0;weightGame.timer=120;weightGame.status='playing';weightGame.liftY=275;keys[' ']=false;}return;}
+    if(keys[' ']){weightGame.taps++;weightGame.liftY=105;keys[' ']=false;setTimeout(()=>{if(weightGame.status==='playing')weightGame.liftY=275;},140);if(weightGame.taps>=weightGame.targetTaps){weightGame.score+=50;weightGame.status='success';}}
+    weightGame.timer--;if(weightGame.timer<=0)weightGame.status='fail';
 }
-function drawWeight() {
-    ctx.fillStyle = "#2c3e50"; ctx.fillRect(0, 0, 700, 400);
-    ctx.fillStyle = "#7f8c8d"; ctx.fillRect(0, 320, 700, 80);
-    ctx.fillStyle = "#ffdbac"; ctx.beginPath(); ctx.arc(350, weightGame.liftY + 30, 16, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#3498db"; ctx.fillRect(338, weightGame.liftY + 46, 24, 50);
-    ctx.fillStyle = "#333"; ctx.fillRect(250, weightGame.liftY, 200, 10);
-    ctx.fillStyle = "#c0392b"; ctx.fillRect(230, weightGame.liftY - 15, 20, 40); ctx.fillRect(450, weightGame.liftY - 15, 20, 40);
-    ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial";
-    ctx.fillText("Skor: " + weightGame.score + " | Süre: " + Math.max(0, weightGame.timer), 25, 35);
+function drawWeight(){
+    ctx.fillStyle='#202b36';ctx.fillRect(0,0,700,400);ctx.fillStyle='#34495e';ctx.fillRect(0,300,700,100);ctx.fillStyle='#566573';ctx.fillRect(110,285,480,15);
+    const baseY=275,barY=weightGame.liftY;ctx.fillStyle='#f2c29b';ctx.beginPath();ctx.arc(350,baseY-75,22,0,Math.PI*2);ctx.fill();ctx.fillStyle='#2e86c1';ctx.fillRect(320,baseY-52,60,82);
+    ctx.strokeStyle='#f2c29b';ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(330,baseY-40);ctx.lineTo(305,barY);ctx.moveTo(370,baseY-40);ctx.lineTo(395,barY);ctx.stroke();ctx.strokeStyle='#1b2631';ctx.lineWidth=14;ctx.beginPath();ctx.moveTo(335,baseY+28);ctx.lineTo(315,baseY+75);ctx.moveTo(365,baseY+28);ctx.lineTo(385,baseY+75);ctx.stroke();
+    ctx.strokeStyle='#222';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(245,barY);ctx.lineTo(455,barY);ctx.stroke();ctx.fillStyle='#111';ctx.fillRect(235,barY-25,18,50);ctx.fillRect(447,barY-25,18,50);ctx.fillStyle='#d5d8dc';ctx.fillRect(215,barY-32,18,64);ctx.fillRect(467,barY-32,18,64);ctx.fillStyle='#7f8c8d';ctx.fillRect(195,barY-25,16,50);ctx.fillRect(489,barY-25,16,50);
+    ctx.fillStyle='#fff';ctx.font='bold 18px Arial';ctx.fillText('Tekrar: '+weightGame.taps+'/'+weightGame.targetTaps+'   Skor: '+weightGame.score+'   Süre: '+Math.max(0,Math.ceil(weightGame.timer/10)),20,32);
+    if(weightGame.status!=='playing'){ctx.fillStyle='rgba(0,0,0,.82)';ctx.fillRect(150,105,400,170);ctx.fillStyle=weightGame.status==='success'?'#2ecc71':'#e74c3c';ctx.font='bold 30px Arial';ctx.textAlign='center';ctx.fillText(weightGame.status==='success'?'🏆 BAŞARDIN!':'⏱️ SÜRE BİTTİ!',350,165);ctx.fillStyle='#fff';ctx.font='bold 16px Arial';ctx.fillText('Tekrar oynamak için [VURUŞ] tuşuna bas',350,215);ctx.textAlign='left';}
 }
 
 function updateSpace() {
     if (keys['ArrowLeft']) spaceGame.shipX -= 6;
     if (keys['ArrowRight']) spaceGame.shipX += 6;
     spaceGame.shipX = Math.max(30, Math.min(670, spaceGame.shipX));
-    if (keys[' ']) { spaceGame.bullets.push({ x: spaceGame.shipX, y: 300 }); keys[' '] = false; }
-    spaceGame.timer++;
-    if (spaceGame.timer % 45 === 0) spaceGame.enemies.push({ x: Math.random() * 600 + 50, y: 0 });
-    for (let i = spaceGame.bullets.length - 1; i >= 0; i--) {
-        spaceGame.bullets[i].y -= 8; if (spaceGame.bullets[i].y < 0) spaceGame.bullets.splice(i, 1);
+
+    if (keys[' ']) {
+        spaceGame.bullets.push({ x: spaceGame.shipX, y: 300 });
+        keys[' '] = false;
     }
+
+    spaceGame.timer++;
+
+    if (spaceGame.timer % 45 === 0) {
+        spaceGame.enemies.push({
+            x: Math.random() * 600 + 50,
+            y: -25,
+            width: 34,
+            height: 24,
+            alive: true
+        });
+    }
+
+    for (let i = spaceGame.bullets.length - 1; i >= 0; i--) {
+        const b = spaceGame.bullets[i];
+        b.y -= 8;
+        if (b.y < -20) spaceGame.bullets.splice(i, 1);
+    }
+
+    // Lazer vurunca düşman gerçekten yok olur
     for (let i = spaceGame.enemies.length - 1; i >= 0; i--) {
-        spaceGame.enemies[i].y += 2.5; if (spaceGame.enemies[i].y > 400) spaceGame.enemies.splice(i, 1);
+        const e = spaceGame.enemies[i];
+        e.y += 2.5;
+
+        let hit = false;
+        for (let j = spaceGame.bullets.length - 1; j >= 0; j--) {
+            const b = spaceGame.bullets[j];
+            if (
+                Math.abs(b.x - e.x) < 22 &&
+                b.y < e.y + e.height &&
+                b.y + 12 > e.y
+            ) {
+                spaceGame.bullets.splice(j, 1);
+                hit = true;
+                break;
+            }
+        }
+
+        if (hit) {
+            spaceGame.enemies.splice(i, 1);
+            spaceGame.score += 100;
+            continue;
+        }
+
+        if (e.y > 400) {
+            spaceGame.enemies.splice(i, 1);
+        }
     }
 }
 function drawSpace() {
-    ctx.fillStyle = "#050510"; ctx.fillRect(0, 0, 700, 400);
-    ctx.fillStyle = "#00ffcc"; ctx.fillRect(spaceGame.shipX - 15, 330, 30, 30);
-    ctx.fillStyle = "#f1c40f"; for (let b of spaceGame.bullets) { ctx.fillRect(b.x - 3, b.y, 6, 12); }
-    ctx.fillStyle = "#e74c3c"; for (let e of spaceGame.enemies) { ctx.fillRect(e.x - 15, e.y, 30, 20); }
-    ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial"; ctx.fillText("Skor: " + spaceGame.score, 25, 35);
+    ctx.fillStyle = "#050510";
+    ctx.fillRect(0, 0, 700, 400);
+
+    // Yıldızlar
+    ctx.fillStyle = "#fff";
+    for (let i = 0; i < 55; i++) {
+        const sx = (i * 97) % 700;
+        const sy = (i * 53 + spaceGame.timer * (i % 3 + 1)) % 400;
+        ctx.fillRect(sx, sy, 2, 2);
+    }
+
+    // Oyuncu uzay gemisi
+    ctx.fillStyle = "#00ffcc";
+    ctx.beginPath();
+    ctx.moveTo(spaceGame.shipX, 315);
+    ctx.lineTo(spaceGame.shipX - 25, 350);
+    ctx.lineTo(spaceGame.shipX - 8, 345);
+    ctx.lineTo(spaceGame.shipX, 360);
+    ctx.lineTo(spaceGame.shipX + 8, 345);
+    ctx.lineTo(spaceGame.shipX + 25, 350);
+    ctx.closePath();
+    ctx.fill();
+
+    // Lazerler
+    ctx.fillStyle = "#f1c40f";
+    for (let b of spaceGame.bullets) {
+        ctx.fillRect(b.x - 3, b.y, 6, 15);
+    }
+
+    // Düşmanlar
+    for (let e of spaceGame.enemies) {
+        ctx.fillStyle = "#e74c3c";
+        ctx.beginPath();
+        ctx.moveTo(e.x, e.y);
+        ctx.lineTo(e.x - 22, e.y + 15);
+        ctx.lineTo(e.x - 13, e.y + 23);
+        ctx.lineTo(e.x + 13, e.y + 23);
+        ctx.lineTo(e.x + 22, e.y + 15);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#ff9f43";
+        ctx.fillRect(e.x - 7, e.y + 7, 14, 7);
+    }
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 18px Arial";
+    ctx.fillText("Skor: " + spaceGame.score, 25, 35);
 }
 
 function updateHeli() {
-    if (keys[' '] || keys['ArrowUp']) { heliGame.vy = -5; keys[' '] = false; keys['ArrowUp'] = false; }
-    heliGame.heliY += heliGame.vy; heliGame.vy += 0.35;
-    heliGame.heliY = Math.max(30, Math.min(370, heliGame.heliY));
+    if (heliGame.crashed) {
+        if (keys[' ']) {
+            heliGame.heliY = 200;
+            heliGame.vy = 0;
+            heliGame.obstacles = [];
+            heliGame.score = 0;
+            heliGame.timer = 0;
+            heliGame.crashed = false;
+            keys[' '] = false;
+        }
+        return;
+    }
+
+    if (keys[' '] || keys['ArrowUp']) {
+        heliGame.vy = -5;
+        keys[' '] = false;
+        keys['ArrowUp'] = false;
+    }
+
+    heliGame.heliY += heliGame.vy;
+    heliGame.vy += 0.35;
+
     heliGame.timer++;
-    if (heliGame.timer % 50 === 0) heliGame.obstacles.push({ x: 700, gapY: Math.random() * 150 + 80 });
+
+    if (heliGame.timer % 50 === 0) {
+        heliGame.obstacles.push({
+            x: 700,
+            gapY: Math.random() * 150 + 80
+        });
+    }
+
     for (let i = heliGame.obstacles.length - 1; i >= 0; i--) {
-        heliGame.obstacles[i].x -= 4;
-        if (heliGame.obstacles[i].x < -40) { heliGame.obstacles.splice(i, 1); heliGame.score += 15; }
+        const obs = heliGame.obstacles[i];
+        obs.x -= 4;
+
+        // Helikopterin engelle çarpma kontrolü
+        const heliLeft = 150;
+        const heliRight = 185;
+        const heliTop = heliGame.heliY - 12;
+        const heliBottom = heliGame.heliY + 12;
+
+        const obstacleLeft = obs.x;
+        const obstacleRight = obs.x + 35;
+        const topBlockBottom = obs.gapY - 50;
+        const bottomBlockTop = obs.gapY + 50;
+
+        const horizontalHit =
+            heliRight > obstacleLeft && heliLeft < obstacleRight;
+
+        const verticalHit =
+            heliTop < topBlockBottom || heliBottom > bottomBlockTop;
+
+        if (horizontalHit && verticalHit) {
+            heliGame.crashed = true;
+            return;
+        }
+
+        if (obs.x < -40) {
+            heliGame.obstacles.splice(i, 1);
+            heliGame.score += 15;
+        }
+    }
+
+    // Tavan / zemin çarpması da kaza
+    if (heliGame.heliY < 30 || heliGame.heliY > 370) {
+        heliGame.crashed = true;
     }
 }
 function drawHeli() {
-    ctx.fillStyle = "#111"; ctx.fillRect(0, 0, 700, 400);
-    ctx.fillStyle = "#3498db"; ctx.fillRect(150, heliGame.heliY - 12, 35, 24);
+    ctx.fillStyle = "#111";
+    ctx.fillRect(0, 0, 700, 400);
+
+    // Mağara duvarları
+    ctx.fillStyle = "#1c2833";
+    ctx.fillRect(0, 0, 700, 12);
+    ctx.fillRect(0, 388, 700, 12);
+
+    // Helikopter
+    ctx.save();
+    ctx.translate(167, heliGame.heliY);
+
+    ctx.fillStyle = "#3498db";
+    ctx.beginPath();
+    ctx.roundRect(-18, -12, 38, 24, 8);
+    ctx.fill();
+
+    ctx.fillStyle = "#b8e6ff";
+    ctx.fillRect(-8, -8, 18, 12);
+
+    ctx.strokeStyle = "#222";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-2, -13);
+    ctx.lineTo(-2, -25);
+    ctx.moveTo(-35, -25);
+    ctx.lineTo(31, -25);
+    ctx.stroke();
+
+    ctx.fillStyle = "#e74c3c";
+    ctx.fillRect(18, -5, 20, 7);
+
+    ctx.restore();
+
+    // Engeller
     ctx.fillStyle = "#e74c3c";
     for (let obs of heliGame.obstacles) {
         ctx.fillRect(obs.x, 0, 35, obs.gapY - 50);
         ctx.fillRect(obs.x, obs.gapY + 50, 35, 400);
     }
-    ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial"; ctx.fillText("Skor: " + heliGame.score, 25, 35);
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 18px Arial";
+    ctx.fillText("Skor: " + heliGame.score, 25, 35);
+
+    if (heliGame.crashed) {
+        ctx.fillStyle = "rgba(0,0,0,0.85)";
+        ctx.fillRect(100, 115, 500, 170);
+        ctx.fillStyle = "#e74c3c";
+        ctx.font = "bold 34px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("💥 KAZA YAPTIN!", 350, 170);
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 18px Arial";
+        ctx.fillText("Engele çarptın!", 350, 210);
+        ctx.fillText("Tekrar oynamak için VURUŞ'a bas", 350, 245);
+        ctx.textAlign = "left";
+    }
 }
 </script>
 
