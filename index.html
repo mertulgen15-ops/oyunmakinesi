@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>GAME ATARİ - PRO</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family, Arial, sans-serif);
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background 0.3s, color 0.3s;
+}
+
+:root {
+    --bg-color: #159bd7;
+    --card-bg: #087fbd;
+    --text-color: #ffffff;
+    --btn-bg: #ffffff;
+    --btn-text: #087fbd;
+    --font-family: Arial, sans-serif;
+}
+
+body.theme-siyah { --bg-color: #121212; --card-bg: #1e1e1e; --text-color: #ffffff; --btn-bg: #333333; --btn-text: #ffffff; }
+body.theme-beyaz { --bg-color: #f4f4f9; --card-bg: #ffffff; --text-color: #222222; --btn-bg: #087fbd; --btn-text: #ffffff; }
+body.theme-kirmizi { --bg-color: #b71c1c; --card-bg: #d32f2f; --text-color: #ffffff; --btn-bg: #ffffff; --btn-text: #b71c1c; }
+body.theme-yesil { --bg-color: #1b5e20; --card-bg: #2e7d32; --text-color: #ffffff; --btn-bg: #ffffff; --btn-text: #1b5e20; }
+body.theme-mor { --bg-color: #4a148c; --card-bg: #6a1b9a; --text-color: #ffffff; --btn-bg: #ffffff; --btn-text: #4a148c; }
+body.theme-turuncu { --bg-color: #e65100; --card-bg: #f57c00; --text-color: #ffffff; --btn-bg: #ffffff; --btn-text: #e65100; }
+body.theme-sari { --bg-color: #fbc02d; --card-bg: #f9a825; --text-color: #222222; --btn-bg: #222222; --btn-text: #fbc02d; }
+body.theme-turkuaz { --bg-color: #00695c; --card-bg: #00897b; --text-color: #ffffff; --btn-bg: #ffffff; --btn-text: #00695c; }
+body.theme-pembe { --bg-color: #880e4f; --card-bg: #ad1457; --text-color: #ffffff; --btn-bg: #ffffff; --btn-text: #880e4f; }
+
+body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    touch-action: manipulation;
+}
+
+header {
+    height: 75px;
+    background: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.logo { font-size: 28px; font-weight: 900; letter-spacing: 1px; }
+
+nav button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-weight: bold;
+    margin-left: 12px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.page { display: none; max-width: 1100px; margin: auto; padding: 35px 20px 70px; }
+.page.active { display: block; }
+
+.hero { text-align: center; padding: 80px 20px; }
+.hero h1 { font-size: 60px; }
+.hero p { margin-top: 12px; font-size: 19px; }
+
+.page-title { font-size: 35px; margin-bottom: 30px; }
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 2px solid rgba(255,255,255,.2);
+    border-radius: 18px;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.card-icon { font-size: 65px; margin-bottom: 15px; }
+.card h3 { margin-bottom: 10px; }
+.card p { margin-bottom: 18px; }
+
+.play-button, .back-button, .theme-btn, .setting-btn {
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.theme-options, .font-options { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 15px; }
+
+#gameArea {
+    display: none;
+    margin-top: 20px;
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 15px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border: 3px solid rgba(255,255,255,0.3);
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    max-width: 700px;
+    height: 380px;
+    margin: 10px auto;
+    background: #111;
+    border-radius: 15px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+
+.mobile-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 700px;
+    margin: 15px auto 0 auto;
+    padding: 0 10px;
+}
+
+.dpad { display: flex; gap: 10px; }
+.action-buttons { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; max-width: 320px; }
+
+.ctrl-btn {
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid #fff;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 12px;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.ctrl-btn:active { background: #f1c40f; color: #000; transform: scale(0.92); }
+.num-btn { width: 48px; height: 48px; font-size: 18px; border-radius: 50%; background: #e74c3c; }
+
+.chat-container { background: rgba(0, 0, 0, 0.2); border-radius: 15px; padding: 20px; max-width: 650px; margin: 0 auto; }
+.chat-box { height: 280px; overflow-y: auto; background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 15px; text-align: left; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
+.chat-message { background: rgba(255, 255, 255, 0.15); padding: 8px 12px; border-radius: 8px; word-break: break-word; }
+.chat-input-group { display: flex; gap: 10px; }
+.chat-input-group input { flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none; font-size: 15px; }
+.chat-input-group button { background: var(--btn-bg); color: var(--btn-text); border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+footer { background: var(--card-bg); text-align: center; padding: 30px; margin-top: 50px; }
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">🎮 GAME ATARİ</div>
+<nav>
+<button onclick="showPage('home')">🏠 Ana Sayfa</button>
+<button onclick="showPage('games')">🎮 Oyunlar</button>
+<button onclick="showPage('series')">📺 Diziler</button>
+<button onclick="showPage('photos')">🖼️ Fotoğraflar</button>
+<button onclick="showPage('chat')">💬 Chat</button>
+<button onclick="showPage('settings')">⚙️ Ayarlar</button>
+</nav>
+</header>
+
+<section id="home" class="page active">
+<div class="hero">
+<h1>GAME ATARİ</h1>
+<p>Süper Lig Penaltı & Gelişmiş Hız Yarışı Güncellendi!</p>
+</div>
+</section>
+
+<section id="games" class="page">
+<h2 class="page-title">🎮 Atari Oyun Salonu</h2>
+<div class="cards">
+<div class="card"><div class="card-icon">⚽</div><h3>Süper Lig Penaltı Düellosu</h3><p>Takım renklerinde formalı kaleciler ve özel efektler!</p><button class="play-button" onclick="startGame('football')">OYNA</button></div>
+<div class="card"><div class="card-icon">🏁</div><h3>Hız Yarışı (Trafikli)</h3><p>Polisler, taksiler, kamyonlar ve harika araçlar!</p><button class="play-button" onclick="startGame('race')">OYNA</button></div>
+<div class="card"><div class="card-icon">🚗</div><h3>Klasik Araba Yarışı</h3><p>3 şeritli klasik yol yarışı!</p><button class="play-button" onclick="startGame('car')">OYNA</button></div>
+<div class="card"><div class="card-icon">⚔️</div><h3>Şövalye: Portal Savaşı</h3><p>Zorluk ve harita seç, düşmanla savaş!</p><button class="play-button" onclick="startGame('knight')">OYNA</button></div>
+<div class="card"><div class="card-icon">🥊</div><h3>2D Gerçekçi Adamlar (Dövüş)</h3><p>Karakterini seç, rakibini K.O. et!</p><button class="play-button" onclick="startGame('tekken')">OYNA</button></div>
+<div class="card"><div class="card-icon">🎯</div><h3>2D Gerçekçi Silah Oyunu</h3><p>Gerçekçi adamlara karşı nişan al ve vur!</p><button class="play-button" onclick="startGame('gungame')">OYNA</button></div>
+<div class="card"><div class="card-icon">🏃</div><h3>2D Gerçekçi Koşu</h3><p>Engellerden zıplayarak kaç!</p><button class="play-button" onclick="startGame('runner')">OYNA</button></div>
+<div class="card"><div class="card-icon">🏀</div><h3>2D Basketbol Atışı</h3><p>Potaya doğru zamanında şut at!</p><button class="play-button" onclick="startGame('basket')">OYNA</button></div>
+<div class="card"><div class="card-icon">🏍️</div><h3>2D Motosiklet Yarışı</h3><p>İki teker üzerinde tehlikeli yolculuk!</p><button class="play-button" onclick="startGame('moto')">OYNA</button></div>
+<div class="card"><div class="card-icon">🏋️</div><h3>2D Halter Kaldırma</h3><p>Zamanında tuşa basıp ağırlığı kaldır!</p><button class="play-button" onclick="startGame('weight')">OYNA</button></div>
+<div class="card"><div class="card-icon">🚀</div><h3>2D Uzay Savaşçısı</h3><p>Uzaylı gemilerini lazerle yok et!</p><button class="play-button" onclick="startGame('space')">OYNA</button></div>
+<div class="card"><div class="card-icon">🚁</div><h3>2D Helikopter Kaçış</h3><p>Dar mağarada helikopteri uçur!</p><button class="play-button" onclick="startGame('heli')">OYNA</button></div>
+</div>
+
+<div id="gameArea">
+<button class="back-button" onclick="closeGame()">← Oyundan Çık</button>
+<h2 id="gameTitle" style="margin-top:10px;"></h2>
+<canvas id="gameCanvas" width="700" height="400"></canvas>
+<p id="gameInfo" style="font-size: 16px; font-weight: bold; margin-top: 5px;"></p>
+
+<div class="mobile-controls">
+    <div class="dpad">
+        <button class="ctrl-btn" ontouchstart="handleTouch('ArrowLeft', true)" ontouchend="handleTouch('ArrowLeft', false)" onmousedown="handleTouch('ArrowLeft', true)" onmouseup="handleTouch('ArrowLeft', false)">◀</button>
+        <button class="ctrl-btn" ontouchstart="handleTouch('ArrowRight', true)" ontouchend="handleTouch('ArrowRight', false)" onmousedown="handleTouch('ArrowRight', true)" onmouseup="handleTouch('ArrowRight', false)">▶</button>
+    </div>
+    <div class="action-buttons">
+        <button class="ctrl-btn num-btn" onclick="pressAction('1')">1</button>
+        <button class="ctrl-btn num-btn" onclick="pressAction('2')">2</button>
+        <button class="ctrl-btn num-btn" onclick="pressAction('3')">3</button>
+        <button class="ctrl-btn num-btn" onclick="pressAction('4')">4</button>
+        <button class="ctrl-btn num-btn" onclick="pressAction('5')">5</button>
+        <button class="ctrl-btn" style="width:70px; background:#27ae60;" ontouchstart="handleTouch(' ', true)" ontouchend="handleTouch(' ', false)" onmousedown="handleTouch(' ', true)" onmouseup="handleTouch(' ', false)">VURUŞ</button>
+    </div>
+</div>
+</div>
+</section>
+
+<section id="series" class="page">
+<h2 class="page-title">📺 Diziler</h2>
+<div class="cards">
+<div class="card"><iframe width="100%" height="250" src="https://www.youtube.com/embed/lX3WgumvK-k?start=1179" frameborder="0" allowfullscreen></iframe></div>
+<div class="card"><div class="card-icon">🍿</div><h3>Nostalji Dizisi</h3><p>Nostaljik atari dönemi videoları.</p></div>
+</div>
+</section>
+
+<section id="photos" class="page">
+<h2 class="page-title">🖼️ Fotoğraflar</h2>
+<div class="card"><div class="card-icon">📸</div><h2>Galeri</h2><p>Oyun galeriniz burada yer alır.</p></div>
+</section>
+
+<section id="chat" class="page">
+<h2 class="page-title">💬 Oyuncu Chat Panel</h2>
+<div class="chat-container">
+    <div class="chat-box" id="chatBox">
+        <div class="chat-message"><b>Sistem:</b> GAME ATARİ Chat salonuna hoş geldiniz!</div>
+        <div class="chat-message"><b>Atari_Kralı:</b> Takım renkleri ve gelişmiş trafik eklendi!</div>
+    </div>
+    <div class="chat-input-group">
+        <input type="text" id="chatInput" placeholder="Mesajınızı yazın..." onkeydown="if(event.key==='Enter') sendMessage()">
+        <button onclick="sendMessage()">Gönder</button>
+    </div>
+</div>
+</section>
+
+<section id="settings" class="page">
+<h2 class="page-title">⚙️ Ayarlar</h2>
+<div class="card" style="margin-bottom: 20px;">
+<h3>🎨 Tema Seçimi</h3>
+<div class="theme-options">
+<button class="theme-btn" onclick="setTheme('mavi')">💙 Mavi</button>
+<button class="theme-btn" onclick="setTheme('siyah')">🖤 Siyah</button>
+<button class="theme-btn" onclick="setTheme('beyaz')">🤍 Beyaz</button>
+<button class="theme-btn" onclick="setTheme('kirmizi')">❤️ Kırmızı</button>
+<button class="theme-btn" onclick="setTheme('yesil')">💚 Yeşil</button>
+<button class="theme-btn" onclick="setTheme('mor')">💜 Mor</button>
+<button class="theme-btn" onclick="setTheme('turuncu')">🧡 Turuncu</button>
+<button class="theme-btn" onclick="setTheme('sari')">💛 Sarı</button>
+<button class="theme-btn" onclick="setTheme('turkuaz')">🩵 Turkuaz</button>
+<button class="theme-btn" onclick="setTheme('pembe')">🩷 Pembe</button>
+</div>
+</div>
+
+<div class="card">
+<h3>🔤 Yazı Tipi (Font) Ayarı</h3>
+<p>Site genelindeki yazı tipini değiştirin:</p>
+<div class="font-options">
+<button class="setting-btn" onclick="setFont('Arial, sans-serif')">Modern (Arial)</button>
+<button class="setting-btn" onclick="setFont('Courier New, monospace')">Retro (Piksel)</button>
+<button class="setting-btn" onclick="setFont('Georgia, serif')">Klasik (Georgia)</button>
+<button class="setting-btn" onclick="setFont('Impact, sans-serif')">Kalın (Impact)</button>
+</div>
+</div>
+</section>
+
+<footer>© 2026 GAME ATARİ • Mobil & PC Platformu</footer>
+
+<script>
+function showPage(page) {
+    document.querySelectorAll(".page").forEach(function(item) { item.classList.remove("active"); });
+    document.getElementById(page).classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function setTheme(theme) {
+    document.body.className = '';
+    if (theme !== 'mavi') { document.body.classList.add('theme-' + theme); }
+}
+
+function setFont(fontName) {
+    document.documentElement.style.setProperty('--font-family', fontName);
+}
+
+function sendMessage() {
+    const input = document.getElementById("chatInput");
+    const messageText = input.value.trim();
+    if (messageText === "") return;
+    const chatBox = document.getElementById("chatBox");
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "chat-message";
+    msgDiv.innerHTML = "<b>Sen:</b> " + messageText;
+    chatBox.appendChild(msgDiv);
+    input.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let gameType = "";
+let gameRunning = false;
+let gameLoopId = null;
+let keys = {};
+
+window.addEventListener("keydown", function(e) {
+    if ([" ", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key) || ["Space", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
+        e.preventDefault();
+    }
+    keys[e.key] = true;
+    keys[e.code] = true;
+    if (e.key === " ") keys["Space"] = true;
+});
+
+window.addEventListener("keyup", function(e) {
+    keys[e.key] = false;
+    keys[e.code] = false;
+    if (e.key === " ") keys["Space"] = false;
+});
+
+function handleTouch(keyName, isPressed) {
+    keys[keyName] = isPressed;
+    if (keyName === " ") keys["Space"] = isPressed;
+}
+
+function pressAction(numStr) {
+    keys[numStr] = true;
+    setTimeout(() => { keys[numStr] = false; }, 200);
+}
+
+/* OYUN DEĞİŞKENLERİ */
+let carX = 315, carScore = 0, carSpeed = 4, carObstacles = [], carGameOver = false, carSpawnTimer = 0;
+
+/* 🏁 GELİŞMİŞ HIZ YARIŞI (TRAFİK ARAÇLARI) */
+let raceStep = "car_select", selectedRaceCar = 0, selectedRaceMap = 0, raceX = 320, raceScore = 0, raceSpeed = 6, raceObstacles = [], raceGameOver = false, raceSpawnTimer = 0, roadOffset = 0;
+
+let raceCars = [
+    { name: "🔴 Kırmızı Spor", bodyColor: "#d32f2f", roofColor: "#b71c1c" },
+    { name: "🚓 Polis Aracı", bodyColor: "#111111", roofColor: "#ffffff" },
+    { name: "🚕 Ticari Taksi", bodyColor: "#fbc02d", roofColor: "#f57f17" },
+    { name: "💜 Gece Moru", bodyColor: "#7b1fa2", roofColor: "#4a148c" },
+    { name: "🟢 Dev Monster 4x4", bodyColor: "#388e3c", roofColor: "#1b5e20" }
+];
+
+let raceMaps = [
+    { name: "🏙️ Şehir Otobanı", bg: "#2c3e50", road: "#34495e", line: "#f1c40f" },
+    { name: "🏜️ Çöl Otoyolu", bg: "#d35400", road: "#e67e22", line: "#ffffff" },
+    { name: "❄️ Karlı Yol", bg: "#bdc3c7", road: "#ecf0f1", line: "#2980b9" },
+    { name: "🌲 Orman Yolu", bg: "#1e4620", road: "#2d5a27", line: "#f39c12" },
+    { name: "🌆 Gece Şehri", bg: "#0f0f1a", road: "#1a1a2e", line: "#00fff0" }
+];
+
+/* ⚽ SÜPER LİG PENALTI DÜELLOSU (TAKIM RENKLERİ & EFEKTLER) */
+let footballStep = "team_select";
+let playerTeam = null, opponentTeam = null;
+let playerGoals = 0, opponentGoals = 0, playerShotsUsed = 0, opponentShotsUsed = 0;
+let turn = "player";
+let shotAnim = { active: false, timer: 0, targetX: 350, keeperX: 350, resultText: "", flash: 0 };
+let footballTeams = [
+    { name: "Fenerbahçe", color1: "#0a192f", color2: "#ffed00" },
+    { name: "Galatasaray", color1: "#a90429", color2: "#fdb913" },
+    { name: "Beşiktaş", color1: "#111111", color2: "#ffffff" },
+    { name: "Trabzonspor", color1: "#800020", color2: "#56a0d3" },
+    { name: "Adana Demirspor", color1: "#00a8e8", color2: "#001f3f" }
+];
+
+/* DİĞER OYUN DEĞİŞKENLERİ */
+let knight = { step: "map_select", map: 0, difficulty: 1, x: 80, y: 265, hp: 100, maxHp: 100, progress: 0, attacking: false, finished: false };
+let enemy = { x: 480, y: 250, hp: 100, maxHp: 100 };
+let knightMaps = [
+    {name: "🌲 Karanlık Orman", sky: "#18231b", ground: "#334b2f"},
+    {name: "🏰 Taş Kale", sky: "#20242b", ground: "#50545b"},
+    {name: "🌋 Ateş Vadisi", sky: "#321b17", ground: "#6a3023"}
+];
+
+let tekkenStep = "map_select", selectedTekkenMap = null;
+let tekkenMaps = {
+    '1': { name: '1 - GECE ŞEHRİ', bg: '#0b0c10', floor: '#1f2833', accent: '#45a29e' },
+    '2': { name: '2 - ÇÖL', bg: '#2b1e17', floor: '#603813', accent: '#d7823f' },
+    '3': { name: '3 - ORMAN', bg: '#051e11', floor: '#133a1b', accent: '#27ae60' },
+    '4': { name: '4 - VOLKAN', bg: '#1a0000', floor: '#4a0e0e', accent: '#e74c3c' },
+    '5': { name: '5 - DOJO', bg: '#1c140d', floor: '#3d2b1f', accent: '#e67e22' }
+};
+let tekkenCharColors = {
+    '1': { name: 'Kırmızı Savaşçı', skin: '#ffdbac', suit: '#e74c3c' },
+    '2': { name: 'Mavi Ninja', skin: '#ffdbac', suit: '#3498db' },
+    '3': { name: 'Yeşil Komando', skin: '#8d5524', suit: '#2ecc71' }
+};
+let tekkenPlayer = { x: 150, y: 220, width: 45, height: 110, speed: 5, charId: '1', isAttacking: false, hp: 100 };
+let tekkenEnemy = { x: 500, y: 220, width: 45, height: 110, hp: 100 };
+
+let gunGame = { crosshairX: 350, crosshairY: 200, score: 0, targets: [], spawnTimer: 0 };
+let runnerGame = { x: 100, y: 270, vy: 0, isJumping: false, score: 0, obstacles: [], timer: 0 };
+let basketGame = { ballX: 350, ballY: 300, isShot: false, vx: 0, vy: 0, score: 0, hoopX: 350 };
+let motoGame = { x: 150, y: 280, vy: 0, isJumping: false, score: 0, obstacles: [], timer: 0 };
+let weightGame = { liftY: 280, weight: 50, score: 0, taps: 0, targetTaps: 15, timer: 100, status: "playing" };
+let spaceGame = { shipX: 350, bullets: [], enemies: [], score: 0, timer: 0 };
+let heliGame = { heliY: 200, vy: 0, obstacles: [], score: 0, timer: 0 };
+
+function gameLoop() {
+    if (!gameRunning) return;
+
+    if (gameType === "car") { updateCar(); drawCar(); }
+    else if (gameType === "race") { updateRace(); drawRace(); }
+    else if (gameType === "football") { updateFootball(); drawFootball(); }
+    else if (gameType === "knight") { updateKnight(); drawKnight(); }
+    else if (gameType === "tekken") { updateTekken(); drawTekken(); }
+    else if (gameType === "gungame") { updateGunGame(); drawGunGame(); }
+    else if (gameType === "runner") { updateRunner(); drawRunner(); }
+    else if (gameType === "basket") { updateBasket(); drawBasket(); }
+    else if (gameType === "moto") { updateMoto(); drawMoto(); }
+    else if (gameType === "weight") { updateWeight(); drawWeight(); }
+    else if (gameType === "space") { updateSpace(); drawSpace(); }
+    else if (gameType === "heli") { updateHeli(); drawHeli(); }
+
+    gameLoopId = requestAnimationFrame(gameLoop);
+}
+
+function startGame(type) {
+    if (gameLoopId) cancelAnimationFrame(gameLoopId);
+    gameType = type;
+    gameRunning = true;
+    document.getElementById("gameArea").style.display = "block";
+
+    if (type === "gungame") {
+        gunGame.score = 0; gunGame.targets = [];
+        document.getElementById("gameTitle").textContent = "🎯 2D GERÇEKÇİ SİLAH OYUNU";
+        document.getElementById("gameInfo").textContent = "Yön tuşları ile nişan al, [VURUŞ] ile ateş et!";
+    } else if (type === "race") {
+        raceStep = "car_select"; selectedRaceCar = 0; selectedRaceMap = 0;
+        raceX = 320; raceScore = 0; raceObstacles = []; raceGameOver = false; raceSpawnTimer = 0; roadOffset = 0;
+        document.getElementById("gameTitle").textContent = "🏁 HIZ YARIŞI (TRAFİK MODU)";
+        document.getElementById("gameInfo").textContent = "1-5 tuşlarıyla araba ve harita seç!";
+    } else if (type === "football") {
+        footballStep = "team_select"; playerGoals = 0; opponentGoals = 0; playerShotsUsed = 0; opponentShotsUsed = 0;
+        turn = "player"; shotAnim.active = false;
+        document.getElementById("gameTitle").textContent = "⚽ SÜPER LİG PENALTI DÜELLOSU";
+        document.getElementById("gameInfo").textContent = "1-5 tuşlarıyla takımını seç!";
+    } else if (type === "knight") {
+        knight.step = "map_select"; knight.x = 80; knight.hp = 100; knight.finished = false; enemy.x = 520; enemy.hp = 100;
+        document.getElementById("gameTitle").textContent = "⚔️ ŞÖVALYE: PORTAL SAVAŞI";
+        document.getElementById("gameInfo").textContent = "1-3 tuşlarıyla harita seç!";
+    } else if (type === "car") {
+        carX = 315; carScore = 0; carObstacles = []; carGameOver = false;
+        document.getElementById("gameTitle").textContent = "🚗 ARABA YARIŞI";
+        document.getElementById("gameInfo").textContent = "Sol/Sağ tuşları ile sür!";
+    } else if (type === "tekken") {
+        tekkenStep = "map_select"; selectedTekkenMap = null;
+        tekkenPlayer.x = 150; tekkenPlayer.hp = 100; tekkenEnemy.x = 500; tekkenEnemy.hp = 100;
+        document.getElementById("gameTitle").textContent = "🥊 2D DÖVÜŞ OYUNU";
+        document.getElementById("gameInfo").textContent = "1-5 harita, 1-3 dövüşçü seç!";
+    } else if (type === "runner") {
+        runnerGame.x = 100; runnerGame.y = 270; runnerGame.vy = 0; runnerGame.isJumping = false; runnerGame.score = 0; runnerGame.obstacles = [];
+        document.getElementById("gameTitle").textContent = "🏃 2D KOŞU";
+        document.getElementById("gameInfo").textContent = "[VURUŞ] veya ⬆️ ile engellerden zıpla!";
+    } else if (type === "basket") {
+        basketGame.ballX = 350; basketGame.ballY = 300; basketGame.isShot = false; basketGame.score = 0;
+        document.getElementById("gameTitle").textContent = "🏀 2D BASKETBOL ATIŞI";
+        document.getElementById("gameInfo").textContent = "[VURUŞ] tuşuna basarak potaya şut at!";
+    } else if (type === "moto") {
+        motoGame.x = 150; motoGame.y = 280; motoGame.vy = 0; motoGame.isJumping = false; motoGame.score = 0; motoGame.obstacles = [];
+        document.getElementById("gameTitle").textContent = "🏍️ 2D MOTOSİKLET YARIŞI";
+        document.getElementById("gameInfo").textContent = "[VURUŞ] ile zıpla!";
+    } else if (type === "weight") {
+        weightGame.score = 0; weightGame.taps = 0; weightGame.status = "playing"; weightGame.timer = 120;
+        document.getElementById("gameTitle").textContent = "🏋️ 2D HALTER KALDIRMA";
+        document.getElementById("gameInfo").textContent = "[VURUŞ] tuşuna hızla basarak kaldır!";
+    } else if (type === "space") {
+        spaceGame.shipX = 350; spaceGame.bullets = []; spaceGame.enemies = []; spaceGame.score = 0;
+        document.getElementById("gameTitle").textContent = "🚀 2D UZAY SAVAŞÇISI";
+        document.getElementById("gameInfo").textContent = "Sol/Sağ ile hareket et, [VURUŞ] ile ateş et!";
+    } else if (type === "heli") {
+        heliGame.heliY = 200; heliGame.vy = 0; heliGame.obstacles = []; heliGame.score = 0;
+        document.getElementById("gameTitle").textContent = "🚁 2D HELİKOPTER KAÇIŞ";
+        document.getElementById("gameInfo").textContent = "[VURUŞ] ile yukarı süzül!";
+    }
+    gameLoop();
+}
+
+function closeGame() {
+    gameRunning = false;
+    if (gameLoopId) cancelAnimationFrame(gameLoopId);
+    document.getElementById("gameArea").style.display = "none";
+}
+
+/* ⚽ SÜPER LİG PENALTI DÜELLOSU MANTIĞI */
+function updateFootball() {
+    if (footballStep === "team_select") {
+        for (let i = 1; i <= 5; i++) {
+            if (keys[i.toString()]) {
+                playerTeam = footballTeams[i - 1];
+                let remaining = footballTeams.filter((_, idx) => idx !== (i - 1));
+                opponentTeam = remaining[Math.floor(Math.random() * remaining.length)];
+                footballStep = "playing";
+                keys[i.toString()] = false;
+                break;
+            }
+        }
+        return;
+    }
+    if (footballStep === "playing" && !shotAnim.active) {
+        if (playerShotsUsed >= 5 && opponentShotsUsed >= 5) { footballStep = "game_over"; return; }
+        if (turn === "player") {
+            let choice = keys["1"] ? 1 : (keys["2"] ? 2 : (keys["3"] ? 3 : 0));
+            if (choice > 0) { keys[choice.toString()] = false; shootPlayer(choice); }
+        } else {
+            let choice = keys["1"] ? 1 : (keys["2"] ? 2 : (keys["3"] ? 3 : 0));
+            if (choice > 0) { keys[choice.toString()] = false; defendPlayer(choice); }
+        }
+    }
+    if (shotAnim.active) {
+        shotAnim.timer--;
+        if (shotAnim.timer <= 0) { shotAnim.active = false; turn = (turn === "player") ? "opponent" : "player"; }
+    }
+}
+
+function shootPlayer(dir) {
+    playerShotsUsed++;
+    let targetX = dir === 1 ? 240 : (dir === 2 ? 350 : 460);
+    let keeperX = [240, 350, 460][Math.floor(Math.random() * 3)];
+    let isGoal = targetX !== keeperX;
+    if (isGoal) { playerGoals++; shotAnim.flash = 25; }
+    shotAnim = { active: true, timer: 90, targetX: targetX, keeperX: keeperX, resultText: isGoal ? "GOOOOOOL! ⚽🔥" : "KALECİ KURTARDI! 🧤❌", flash: isGoal ? 25 : 0 };
+}
+
+function defendPlayer(dir) {
+    opponentShotsUsed++;
+    let keeperX = dir === 1 ? 240 : (dir === 2 ? 350 : 460);
+    let targetX = [240, 350, 460][Math.floor(Math.random() * 3)];
+    let isGoal = targetX !== keeperX;
+    if (isGoal) opponentGoals++;
+    shotAnim = { active: true, timer: 90, targetX: targetX, keeperX: keeperX, resultText: isGoal ? "RAKİP GOL ATTI! ⚽" : "SÜPER KURTARIŞ! 🧤🎉", flash: !isGoal ? 25 : 0 };
+}
+
+function drawFootball() {
+    ctx.fillStyle = "#1b5e20"; ctx.fillRect(0, 0, 700, 400);
+    
+    // Kale ve File Efekti
+    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 6; ctx.strokeRect(180, 60, 340, 160);
+    ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 2;
+    for(let i=210; i<520; i+=30) { ctx.beginPath(); ctx.moveTo(i, 60); ctx.lineTo(i, 220); ctx.stroke(); }
+
+    if (footballStep === "team_select") {
+        ctx.fillStyle = "rgba(0,0,0,0.85)"; ctx.fillRect(50, 40, 600, 320);
+        ctx.fillStyle = "#fff"; ctx.font = "bold 20px Arial"; ctx.textAlign = "center";
+        ctx.fillText("SÜPER LİG TAKIMINI SEÇ (1 - 5 Tuşları)", 350, 85);
+        for (let i = 0; i < footballTeams.length; i++) {
+            ctx.fillText(`[${i+1}] ${footballTeams[i].name}`, 350, 130 + i * 45);
+        }
+        ctx.textAlign = "left";
+    } else {
+        // Skor Tablosu
+        ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(20, 15, 660, 40);
+        ctx.fillStyle = playerTeam.color2; ctx.font = "bold 16px Arial";
+        ctx.fillText(`${playerTeam.name} [ ${playerGoals} ]`, 35, 40);
+        ctx.fillStyle = "#ffffff"; ctx.fillText("VS", 335, 40);
+        ctx.fillStyle = opponentTeam.color2; ctx.textAlign = "right";
+        ctx.fillText(`[ ${opponentGoals} ] ${opponentTeam.name}`, 665, 40);
+        ctx.textAlign = "left";
+
+        // Kaleci (Rakip Takım Renklerinde Forması)
+        let displayKeeperX = shotAnim.active ? shotAnim.keeperX : 350;
+        ctx.fillStyle = "#ffdbac"; ctx.beginPath(); ctx.arc(displayKeeperX, 100, 14, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = opponentTeam.color1; ctx.fillRect(displayKeeperX - 14, 114, 28, 40);
+        ctx.fillStyle = opponentTeam.color2; ctx.fillRect(displayKeeperX - 8, 114, 16, 40); // Çubuklu/Parçalı efekt
+
+        // Şut Çeken Oyuncu (Senin Takımın Renklerinde)
+        ctx.fillStyle = "#ffdbac"; ctx.beginPath(); ctx.arc(350, 330, 14, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = playerTeam.color1; ctx.fillRect(338, 344, 24, 45);
+        ctx.fillStyle = playerTeam.color2; ctx.fillRect(344, 344, 12, 45);
+
+        // Top ve Efektler
+        if (shotAnim.active) {
+            ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(shotAnim.targetX, 210, 11, 0, Math.PI * 2); ctx.fill();
+            
+            // Gol patlama efekti
+            if(shotAnim.flash > 0) {
+                ctx.fillStyle = "rgba(255, 215, 0, 0.4)"; ctx.fillRect(180, 60, 340, 160);
+                shotAnim.flash--;
+            }
+
+            ctx.fillStyle = "#f1c40f"; ctx.font = "bold 28px Arial"; ctx.textAlign = "center";
+            ctx.fillText(shotAnim.resultText, 350, 270);
+            ctx.textAlign = "left";
+        } else {
+            ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(350, 330, 11, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "#f1c40f"; ctx.font = "bold 15px Arial"; ctx.textAlign = "center";
+            ctx.fillText(turn === "player" ? "Şut çekmek için [1: Sol, 2: Orta, 3: Sağ] tuşuna bas!" : "Kurtarış yapmak için [1, 2, 3] tuşuna bas!", 350, 300);
+            ctx.textAlign = "left";
+        }
+
+        if (footballStep === "game_over") {
+            ctx.fillStyle = "rgba(0,0,0,0.9)"; ctx.fillRect(100, 80, 500, 240);
+            ctx.fillStyle = "#f1c40f"; ctx.font = "bold 30px Arial"; ctx.textAlign = "center";
+            ctx.fillText(playerGoals > opponentGoals ? "🏆 MAÇI KAZANDIN!" : "MAÇI KAYBETTİN!", 350, 160);
+            ctx.fillStyle = "#ffffff"; ctx.font = "bold 20px Arial";
+            ctx.fillText(`Skor: ${playerGoals} - ${opponentGoals}`, 350, 210);
+            ctx.fillText("Yeniden oynamak için sayfayı yenile veya başka oyun seç.", 350, 260);
+            ctx.textAlign = "left";
+        }
+    }
+}
+
+/* 🏁 GELİŞMİŞ HIZ YARIŞI (TRAFİK) MANTIĞI */
+function updateRace() {
+    if (raceStep === "car_select") {
+        for (let i = 1; i <= 5; i++) { if (keys[i.toString()]) { selectedRaceCar = i - 1; raceStep = "map_select"; keys[i.toString()] = false; break; } }
+        return;
+    }
+    if (raceStep === "map_select") {
+        for (let i = 1; i <= 5; i++) { if (keys[i.toString()]) { selectedRaceMap = i - 1; raceStep = "playing"; keys[i.toString()] = false; break; } }
+        return;
+    }
+    if (raceStep === "playing" && !raceGameOver) {
+        if (keys['ArrowLeft']) raceX -= 7;
+        if (keys['ArrowRight']) raceX += 7;
+        raceX = Math.max(195, Math.min(455, raceX));
+        roadOffset = (roadOffset + raceSpeed) % 40;
+        raceSpawnTimer++;
+        if (raceSpawnTimer > 30) {
+            raceSpawnTimer = 0;
+            // Farklı türde araçlar (Kamyon, Polis, Taksi, Spor Araba)
+            let types = ['car', 'police', 'taxi', 'truck'];
+            let chosenType = types[Math.floor(Math.random() * types.length)];
+            let laneX = [205, 310, 420][Math.floor(Math.random() * 3)];
+            raceObstacles.push({ x: laneX, y: -100, type: chosenType, speed: Math.random() * 1.5 + 3.5 });
+        }
+        for (let i = raceObstacles.length - 1; i >= 0; i--) {
+            raceObstacles[i].y += raceSpeed;
+            if (raceObstacles[i].y > 400) { raceObstacles.splice(i, 1); raceScore += 25; }
+            // Çarpışma kontrolü
+            let h = raceObstacles[i].type === 'truck' ? 100 : 70;
+            if (raceObstacles[i].y > 230 && raceObstacles[i].y < 350 && Math.abs(raceX - raceObstacles[i].x) < 35) {
+                raceGameOver = true;
+            }
+        }
+    } else if (raceGameOver && keys[' ']) {
+        raceStep = "car_select"; raceX = 320; raceScore = 0; raceObstacles = []; raceGameOver = false; keys[' '] = false;
+    }
+}
+
+function drawRace() {
+    let map = raceMaps[selectedRaceMap];
+    if (raceStep === "car_select" || raceStep === "map_select") {
+        ctx.fillStyle = "#111"; ctx.fillRect(0, 0, 700, 400);
+        ctx.fillStyle = "#fff"; ctx.font = "bold 22px Arial"; ctx.textAlign = "center";
+        ctx.fillText(raceStep === "car_select" ? "ARABANI SEÇ (1 - 5)" : "HARİTAYI SEÇ (1 - 5)", 350, 70);
+        let list = raceStep === "car_select" ? raceCars : raceMaps;
+        for(let i=0; i<list.length; i++) {
+            ctx.fillText(`[${i+1}] ${list[i].name}`, 350, 130 + i * 50);
+        }
+        ctx.textAlign = "left";
+        return;
+    }
+    
+    // Yol Çizimi ve Şerit Çizgileri
+    ctx.fillStyle = map.bg; ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = map.road; ctx.fillRect(170, 0, 360, 400);
+    ctx.strokeStyle = map.line; ctx.lineWidth = 4; ctx.setLineDash([25, 25]);
+    ctx.lineDashOffset = -roadOffset;
+    ctx.beginPath(); ctx.moveTo(280, 0); ctx.lineTo(280, 400); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(390, 0); ctx.lineTo(390, 400); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Karşıdan Gelen Trafik Araçları
+    for (let obs of raceObstacles) {
+        if (obs.type === 'police') {
+            ctx.fillStyle = "#111"; ctx.fillRect(obs.x - 20, obs.y, 40, 70);
+            ctx.fillStyle = "#fff"; ctx.fillRect(obs.x - 15, obs.y + 20, 30, 30);
+            ctx.fillStyle = (Math.floor(Date.now() / 150) % 2 === 0) ? "#3498db" : "#e74c3c";
+            ctx.fillRect(obs.x - 6, obs.y + 10, 12, 6); // Polis tepe lambası
+        } else if (obs.type === 'taxi') {
+            ctx.fillStyle = "#f1c40f"; ctx.fillRect(obs.x - 20, obs.y, 40, 70);
+            ctx.fillStyle = "#333"; ctx.fillRect(obs.x - 15, obs.y + 10, 30, 20);
+        } else if (obs.type === 'truck') {
+            ctx.fillStyle = "#7f8c8d"; ctx.fillRect(obs.x - 23, obs.y, 46, 100);
+            ctx.fillStyle = "#e67e22"; ctx.fillRect(obs.x - 20, obs.y + 10, 40, 25);
+        } else {
+            ctx.fillStyle = "#e74c3c"; ctx.fillRect(obs.x - 20, obs.y, 40, 70);
+            ctx.fillStyle = "#222"; ctx.fillRect(obs.x - 15, obs.y + 15, 30, 20);
+        }
+    }
+
+    // Senin Araban
+    let myCar = raceCars[selectedRaceCar];
+    ctx.fillStyle = myCar.bodyColor; ctx.fillRect(raceX - 22, 280, 44, 80);
+    ctx.fillStyle = myCar.roofColor; ctx.fillRect(raceX - 17, 300, 34, 35);
+    ctx.fillStyle = "#111"; ctx.fillRect(raceX - 24, 290, 4, 15); ctx.fillRect(raceX + 20, 290, 4, 15);
+    ctx.fillRect(raceX - 24, 345, 4, 15); ctx.fillRect(raceX + 20, 345, 4, 15);
+
+    ctx.fillStyle = "#fff"; ctx.font = "bold 16px Arial"; ctx.fillText("Puan / Mesafe: " + raceScore, 20, 30);
+    
+    if (raceGameOver) {
+        ctx.fillStyle = "rgba(0,0,0,0.85)"; ctx.fillRect(150, 120, 400, 160);
+        ctx.fillStyle = "#e74c3c"; ctx.font = "bold 30px Arial"; ctx.textAlign = "center";
+        ctx.fillText("💥 KAZA YAPTIN!", 350, 170);
+        ctx.fillStyle = "#ffffff"; ctx.font = "bold 16px Arial";
+        ctx.fillText("Tekrar oynamak için [VURUŞ] tuşuna bas", 350, 220);
+        ctx.textAlign = "left";
+    }
+}
+
+/* DİĞER OYUN MANTIKLARI (Gerekli Yedek Motorlar) */
+function updateKnight() {
+    if (knight.step === "map_select") {
+        for (let i = 1; i <= 3; i++) { if (keys[i.toString()]) { knight.map = i - 1; knight.step = "difficulty_select"; keys[i.toString()] = false; break; } }
+        return;
+    }
+    if (knight.step === "difficulty_select") {
+        for (let i = 1; i <= 3; i++) { if (keys[i.toString()]) { knight.difficulty = i; knight.step = "playing"; keys[i.toString()] = false; break; } }
+        return;
+    }
+    if (knight.step === "playing" && !knight.finished) {
+        if (keys['ArrowLeft']) knight.x -= 4;
+        if (keys['ArrowRight']) knight.x += 4;
+        if (keys[' '] && !knight.attacking) {
+            knight.attacking = true;
+            setTimeout(() => { knight.attacking = false; }, 300);
+            if (Math.abs(knight.x - enemy.x) < 70) {
+                enemy.hp -= 25 * knight.difficulty;
+                if (enemy.hp <= 0) knight.finished = true;
+            }
+            keys[' '] = false;
+        }
+    } else if (knight.finished && keys[' ']) {
+        knight.step = "map_select"; knight.hp = 100; enemy.hp = 100; knight.finished = false; keys[' '] = false;
+    }
+}
+function drawKnight() {
+    let map = knightMaps[knight.map];
+    ctx.fillStyle = map.sky; ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = map.ground; ctx.fillRect(0, 320, 700, 80);
+    if (knight.step === "map_select" || knight.step === "difficulty_select") {
+        ctx.fillStyle = "rgba(0,0,0,0.8)"; ctx.fillRect(50, 50, 600, 300);
+        ctx.fillStyle = "#fff"; ctx.font = "bold 20px Arial"; ctx.textAlign = "center";
+        ctx.fillText(knight.step === "map_select" ? "HARİTA SEÇ (1 - 3)" : "ZORLUK SEÇ (1 - 3)", 350, 100);
+        let list = knight.step === "map_select" ? knightMaps : [{name:"Kolay"}, {name:"Orta"}, {name:"Zor"}];
+        for(let i=0; i<list.length; i++) { ctx.fillText(`[${i+1}] ${list[i].name}`, 350, 160 + i*50); }
+        ctx.textAlign = "left";
+        return;
+    }
+    ctx.fillStyle = "#bdc3c7"; ctx.fillRect(knight.x - 15, 260, 30, 60);
+    ctx.fillStyle = "#c0392b"; ctx.fillRect(enemy.x - 15, 260, 30, 60);
+    ctx.fillStyle = "#2ecc71"; ctx.fillRect(30, 25, (knight.hp / 100) * 200, 18);
+}
+
+function updateTekken() {
+    if (tekkenStep === "map_select") {
+        for (let i = 1; i <= 5; i++) { if (keys[i.toString()]) { selectedTekkenMap = i.toString(); tekkenStep = "char_select"; keys[i.toString()] = false; break; } }
+        return;
+    }
+    if (tekkenStep === "char_select") {
+        for (let i = 1; i <= 3; i++) { if (keys[i.toString()]) { tekkenPlayer.charId = i.toString(); tekkenStep = "playing"; keys[i.toString()] = false; break; } }
+        return;
+    }
+    if (tekkenStep === "playing" && tekkenPlayer.hp > 0 && tekkenEnemy.hp > 0) {
+        if (keys['ArrowLeft']) tekkenPlayer.x -= 5;
+        if (keys['ArrowRight']) tekkenPlayer.x += 5;
+        if (keys[' '] && !tekkenPlayer.isAttacking) {
+            tekkenPlayer.isAttacking = true;
+            setTimeout(() => { tekkenPlayer.isAttacking = false; }, 250);
+            if (Math.abs(tekkenPlayer.x - tekkenEnemy.x) < 65) tekkenEnemy.hp -= 15;
+            keys[' '] = false;
+        }
+    } else if ((tekkenPlayer.hp <= 0 || tekkenEnemy.hp <= 0) && keys[' ']) {
+        tekkenStep = "map_select"; tekkenPlayer.hp = 100; tekkenEnemy.hp = 100; keys[' '] = false;
+    }
+}
+function drawTekken() {
+    if (tekkenStep === "map_select" || tekkenStep === "char_select") {
+        ctx.fillStyle = "#111"; ctx.fillRect(0, 0, 700, 400);
+        ctx.fillStyle = "#fff"; ctx.font = "bold 20px Arial"; ctx.textAlign = "center";
+        ctx.fillText(tekkenStep === "map_select" ? "ARENA SEÇ (1 - 5)" : "KARAKTER SEÇ (1 - 3)", 350, 70);
+        let list = tekkenStep === "map_select" ? tekkenMaps : tekkenCharColors;
+        let idx = 1; for (let id in list) { ctx.fillText(`[${id}] ${list[id].name}`, 350, 110 + (idx++ * 45)); }
+        ctx.textAlign = "left";
+        return;
+    }
+    let map = tekkenMaps[selectedTekkenMap];
+    ctx.fillStyle = map.bg; ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = map.floor; ctx.fillRect(0, 310, 700, 90);
+    ctx.fillStyle = tekkenCharColors[tekkenPlayer.charId].suit; ctx.fillRect(tekkenPlayer.x - 12, 224, 24, 55);
+    ctx.fillStyle = "#c0392b"; ctx.fillRect(tekkenEnemy.x - 12, 224, 24, 55);
+    ctx.fillStyle = "#2ecc71"; ctx.fillRect(30, 20, (tekkenPlayer.hp / 100) * 220, 20);
+}
+
+function updateGunGame() {
+    if (keys['ArrowLeft']) gunGame.crosshairX -= 6;
+    if (keys['ArrowRight']) gunGame.crosshairX += 6;
+    if (keys['ArrowUp']) gunGame.crosshairY -= 6;
+    if (keys['ArrowDown']) gunGame.crosshairY += 6;
+    gunGame.spawnTimer++;
+    if (gunGame.spawnTimer > 40) {
+        gunGame.spawnTimer = 0;
+        gunGame.targets.push({ x: Math.random() * 500 + 100, y: Math.random() * 200 + 80, radius: 25, active: true });
+    }
+    if (keys[' ']) {
+        for (let t of gunGame.targets) {
+            if (Math.hypot(gunGame.crosshairX - t.x, gunGame.crosshairY - t.y) < t.radius && t.active) {
+                t.active = false; gunGame.score += 100;
+            }
+        }
+        keys[' '] = false;
+    }
+}
+function drawGunGame() {
+    ctx.fillStyle = "#1e272e"; ctx.fillRect(0, 0, 700, 400);
+    for (let t of gunGame.targets) {
+        if (!t.active) continue;
+        ctx.fillStyle = "#e74c3c"; ctx.beginPath(); ctx.arc(t.x, t.y, t.radius, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.strokeStyle = "#00ff00"; ctx.lineWidth = 2;
+    ctx.strokeRect(gunGame.crosshairX - 10, gunGame.crosshairY - 10, 20, 20);
+    ctx.fillStyle = "#fff"; ctx.fillText("Skor: " + gunGame.score, 20, 30);
+}
+
+function updateCar() {
+    if (keys['ArrowLeft']) carX -= 6;
+    if (keys['ArrowRight']) carX += 6;
+    carX = Math.max(200, Math.min(450, carX));
+    carSpawnTimer++;
+    if (carSpawnTimer > 45) {
+        carSpawnTimer = 0;
+        carObstacles.push({ x: [220, 320, 420][Math.floor(Math.random() * 3)], y: -60 });
+    }
+    for (let i = carObstacles.length - 1; i >= 0; i--) {
+        carObstacles[i].y += carSpeed;
+        if (carObstacles[i].y > 400) { carObstacles.splice(i, 1); carScore += 10; }
+        if (carObstacles[i].y > 270 && carObstacles[i].y < 350 && Math.abs(carX - carObstacles[i].x) < 35) carGameOver = true;
+    }
+}
+function drawCar() {
+    ctx.fillStyle = "#2c3e50"; ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = "#34495e"; ctx.fillRect(180, 0, 340, 400);
+    for (let obs of carObstacles) { ctx.fillStyle = "#e74c3c"; ctx.fillRect(obs.x - 20, obs.y, 40, 70); }
+    ctx.fillStyle = "#3498db"; ctx.fillRect(carX - 20, 290, 40, 70);
+    ctx.fillStyle = "#fff"; ctx.fillText("Skor: " + carScore, 20, 30);
+}
+
+function updateRunner() {
+    runnerGame.timer++;
+    if ((keys[' '] || keys['ArrowUp']) && !runnerGame.isJumping) {
+        runnerGame.vy = -12; runnerGame.isJumping = true;
+        keys[' '] = false; keys['ArrowUp'] = false;
+    }
+    runnerGame.y += runnerGame.vy; runnerGame.vy += 0.6;
+    if (runnerGame.y > 270) { runnerGame.y = 270; runnerGame.isJumping = false; }
+    if (runnerGame.timer % 60 === 0) runnerGame.obstacles.push({ x: 700, y: 285 });
+    for (let i = runnerGame.obstacles.length - 1; i >= 0; i--) {
+        runnerGame.obstacles[i].x -= 5;
+        if (runnerGame.obstacles[i].x < -30) { runnerGame.obstacles.splice(i, 1); runnerGame.score += 15; }
+    }
+}
+function drawRunner() {
+    ctx.fillStyle = "#2980b9"; ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = "#27ae60"; ctx.fillRect(0, 320, 700, 80);
+    ctx.fillStyle = "#f1c40f"; ctx.beginPath(); ctx.arc(runnerGame.x, runnerGame.y - 15, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#c0392b";
+    for (let obs of runnerGame.obstacles) { ctx.fillRect(obs.x, obs.y, 25, 35); }
+    ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial"; ctx.fillText("Skor: " + runnerGame.score, 25, 35);
+}
+
+function updateBasket() {
+    if (keys[' '] && !basketGame.isShot) {
+        basketGame.isShot = true; basketGame.vx = 4; basketGame.vy = -10; keys[' '] = false;
+    }
+    if (basketGame.isShot) {
+        basketGame.ballX += basketGame.vx; basketGame.ballY += basketGame.vy; basketGame.vy += 0.4;
+        if (Math.abs(basketGame.ballX - 520) < 20 && Math.abs(basketGame.ballY - 150) < 20) {
+            basketGame.score += 2; resetBasket();
+        }
+        if (basketGame.ballY > 400 || basketGame.ballX > 700) resetBasket();
+    }
+}
+function resetBasket() { basketGame.isShot = false; basketGame.ballX = 150; basketGame.ballY = 300; basketGame.vx = 0; basketGame.vy = 0; }
+function drawBasket() {
+    ctx.fillStyle = "#d35400"; ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = "#fff"; ctx.fillRect(510, 80, 12, 120);
+    ctx.strokeStyle = "#e74c3c"; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(520, 150, 25, 0, Math.PI); ctx.stroke();
+    ctx.fillStyle = "#e67e22"; ctx.beginPath(); ctx.arc(basketGame.ballX, basketGame.ballY, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial"; ctx.fillText("Skor: " + basketGame.score, 25, 35);
+}
+
+function updateMoto() {
+    motoGame.timer++;
+    if ((keys[' '] || keys['ArrowUp']) && !motoGame.isJumping) {
+        motoGame.vy = -10; motoGame.isJumping = true; keys[' '] = false; keys['ArrowUp'] = false;
+    }
+    motoGame.y += motoGame.vy; motoGame.vy += 0.5;
+    if (motoGame.y > 280) { motoGame.y = 280; motoGame.isJumping = false; }
+    if (motoGame.timer % 55 === 0) motoGame.obstacles.push({ x: 700, y: 295 });
+    for (let i = motoGame.obstacles.length - 1; i >= 0; i--) {
+        motoGame.obstacles[i].x -= 6;
+        if (motoGame.obstacles[i].x < -30) { motoGame.obstacles.splice(i, 1); motoGame.score += 20; }
+    }
+}
+function drawMoto() {
+    ctx.fillStyle = "#34495e"; ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = "#111"; ctx.fillRect(0, 320, 700, 80);
+    ctx.fillStyle = "#e74c3c"; ctx.fillRect(motoGame.x - 20, motoGame.y - 15, 40, 20);
+    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(motoGame.x - 12, motoGame.y + 5, 8, 0, Math.PI * 2); ctx.arc(motoGame.x + 12, motoGame.y + 5, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#f1c40f";
+    for (let obs of motoGame.obstacles) { ctx.fillRect(obs.x, obs.y - 15, 20, 25); }
+    ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial"; ctx.fillText("Skor: " + motoGame.score, 25, 35);
+}
+
+function updateWeight() {
+    if (keys[' ']) {
+        weightGame.taps++;
+        weightGame.liftY = Math.max(80, 280 - (weightGame.taps * 8));
+        keys[' '] = false;
+    }
+    weightGame.timer--;
+    if (weightGame.timer <= 0) {
+        if (weightGame.taps >= weightGame.targetTaps) { weightGame.score += 50; weightGame.status = "success"; }
+        else { weightGame.status = "fail"; }
+    }
+}
+function drawWeight() {
+    ctx.fillStyle = "#2c3e50"; ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = "#7f8c8d"; ctx.fillRect(0, 320, 700, 80);
+    ctx.fillStyle = "#ffdbac"; ctx.beginPath(); ctx.arc(350, weightGame.liftY + 30, 16, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#3498db"; ctx.fillRect(338, weightGame.liftY + 46, 24, 50);
+    ctx.fillStyle = "#333"; ctx.fillRect(250, weightGame.liftY, 200, 10);
+    ctx.fillStyle = "#c0392b"; ctx.fillRect(230, weightGame.liftY - 15, 20, 40); ctx.fillRect(450, weightGame.liftY - 15, 20, 40);
+    ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial";
+    ctx.fillText("Skor: " + weightGame.score + " | Süre: " + Math.max(0, weightGame.timer), 25, 35);
+}
+
+function updateSpace() {
+    if (keys['ArrowLeft']) spaceGame.shipX -= 6;
+    if (keys['ArrowRight']) spaceGame.shipX += 6;
+    spaceGame.shipX = Math.max(30, Math.min(670, spaceGame.shipX));
+    if (keys[' ']) { spaceGame.bullets.push({ x: spaceGame.shipX, y: 300 }); keys[' '] = false; }
+    spaceGame.timer++;
+    if (spaceGame.timer % 45 === 0) spaceGame.enemies.push({ x: Math.random() * 600 + 50, y: 0 });
+    for (let i = spaceGame.bullets.length - 1; i >= 0; i--) {
+        spaceGame.bullets[i].y -= 8; if (spaceGame.bullets[i].y < 0) spaceGame.bullets.splice(i, 1);
+    }
+    for (let i = spaceGame.enemies.length - 1; i >= 0; i--) {
+        spaceGame.enemies[i].y += 2.5; if (spaceGame.enemies[i].y > 400) spaceGame.enemies.splice(i, 1);
+    }
+}
+function drawSpace() {
+    ctx.fillStyle = "#050510"; ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = "#00ffcc"; ctx.fillRect(spaceGame.shipX - 15, 330, 30, 30);
+    ctx.fillStyle = "#f1c40f"; for (let b of spaceGame.bullets) { ctx.fillRect(b.x - 3, b.y, 6, 12); }
+    ctx.fillStyle = "#e74c3c"; for (let e of spaceGame.enemies) { ctx.fillRect(e.x - 15, e.y, 30, 20); }
+    ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial"; ctx.fillText("Skor: " + spaceGame.score, 25, 35);
+}
+
+function updateHeli() {
+    if (keys[' '] || keys['ArrowUp']) { heliGame.vy = -5; keys[' '] = false; keys['ArrowUp'] = false; }
+    heliGame.heliY += heliGame.vy; heliGame.vy += 0.35;
+    heliGame.heliY = Math.max(30, Math.min(370, heliGame.heliY));
+    heliGame.timer++;
+    if (heliGame.timer % 50 === 0) heliGame.obstacles.push({ x: 700, gapY: Math.random() * 150 + 80 });
+    for (let i = heliGame.obstacles.length - 1; i >= 0; i--) {
+        heliGame.obstacles[i].x -= 4;
+        if (heliGame.obstacles[i].x < -40) { heliGame.obstacles.splice(i, 1); heliGame.score += 15; }
+    }
+}
+function drawHeli() {
+    ctx.fillStyle = "#111"; ctx.fillRect(0, 0, 700, 400);
+    ctx.fillStyle = "#3498db"; ctx.fillRect(150, heliGame.heliY - 12, 35, 24);
+    ctx.fillStyle = "#e74c3c";
+    for (let obs of heliGame.obstacles) {
+        ctx.fillRect(obs.x, 0, 35, obs.gapY - 50);
+        ctx.fillRect(obs.x, obs.gapY + 50, 35, 400);
+    }
+    ctx.fillStyle = "#fff"; ctx.font = "bold 18px Arial"; ctx.fillText("Skor: " + heliGame.score, 25, 35);
+}
+</script>
+
+</body>
+</html>
