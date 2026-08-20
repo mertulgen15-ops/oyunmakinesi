@@ -170,6 +170,74 @@ nav button {
 .chat-input-group button { background: var(--btn-bg); color: var(--btn-text); border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
 footer { background: var(--card-bg); text-align: center; padding: 30px; margin-top: 50px; }
+
+#vice3dContainer {
+    display:none;
+    width:100%;
+    max-width:900px;
+    height:500px;
+    margin:10px auto;
+    border-radius:15px;
+    overflow:hidden;
+    background:#080b12;
+    position:relative;
+    box-shadow:inset 0 0 30px rgba(0,0,0,.8);
+}
+#vice3dContainer canvas { width:100% !important; height:100% !important; display:block; }
+.vice-hud {
+    position:absolute; left:15px; top:15px; z-index:5;
+    background:rgba(0,0,0,.62); color:#fff; padding:10px 14px;
+    border-radius:10px; font:700 14px Arial,sans-serif; pointer-events:none;
+}
+
+
+/* OYUN MODU: Oyuna girince sayfa aşağı kaymaz, oyun ekranı tam alanı kaplar */
+body.game-active { overflow: hidden !important; height: 100vh; }
+body.game-active > header, body.game-active > section:not(#games) { display: none !important; }
+body.game-active #games { display: block !important; padding: 0 !important; margin: 0 !important; max-width: none !important; }
+body.game-active #games > .page-title, body.game-active #games > .cards { display: none !important; }
+body.game-active #gameArea {
+    display: flex !important; flex-direction: column; justify-content: center;
+    position: fixed !important; inset: 0 !important; z-index: 99999 !important;
+    width: 100vw !important; height: 100vh !important; max-width: none !important;
+    margin: 0 !important; padding: 8px !important; border-radius: 0 !important;
+    overflow: hidden !important;
+}
+body.game-active #gameCanvas {
+    width: 100vw !important; max-width: none !important;
+    height: min(72vh, calc(100vw * 0.5714)) !important;
+    max-height: calc(100vh - 125px) !important; margin: 8px auto !important;
+}
+body.game-active #vice3dContainer, body.game-active #football3dContainer {
+    width: 100vw !important; max-width: none !important;
+    height: calc(100vh - 105px) !important; max-height: none !important;
+    margin: 0 auto !important; border-radius: 0 !important;
+}
+body.game-active .mobile-controls {
+    width: min(100vw, 900px); max-width: 100vw; margin: 4px auto 0 !important;
+    flex-shrink: 0; padding: 0 8px !important;
+}
+body.game-active .back-button {
+    position: absolute; left: 8px; top: 8px; z-index: 100001; margin: 0;
+    padding: 9px 14px; opacity: .9;
+}
+body.game-active #gameTitle { margin-top: 2px !important; }
+body.game-active #gameInfo { flex-shrink: 0; }
+body.game-active footer { display: none !important; }
+
+
+#football3dContainer{display:none;width:100%;height:calc(100vh - 105px);position:relative;overflow:hidden;background:#0b1220;border-radius:0;}
+#football3dContainer canvas{width:100%!important;height:100%!important;display:block;}
+.football-hud{position:absolute;left:14px;top:14px;z-index:10;background:rgba(0,0,0,.65);color:#fff;padding:10px 14px;border-radius:10px;font:700 14px Arial;pointer-events:none;}
+.football-select{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);}
+.football-select-box{width:min(720px,94vw);padding:20px;border-radius:18px;background:rgba(12,18,30,.94);color:#fff;text-align:center;box-shadow:0 10px 35px rgba(0,0,0,.45);}
+.football-team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px;}
+.football-team-btn{border:2px solid rgba(255,255,255,.25);border-radius:10px;padding:11px 8px;color:#fff;font-weight:800;cursor:pointer;background:#202a3a;}
+.football-team-btn span{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:7px;vertical-align:-1px;}
+.football-actions{display:none;position:absolute;right:12px;bottom:12px;z-index:15;gap:8px;flex-wrap:wrap;max-width:300px;justify-content:flex-end;}
+.football-actions button{width:58px;height:58px;border-radius:50%;border:2px solid #fff;background:rgba(20,30,45,.8);color:#fff;font-weight:900;font-size:15px;touch-action:manipulation;}
+@media(max-width:600px){.football-team-grid{grid-template-columns:repeat(2,1fr)}#football3dContainer{height:calc(100vh - 75px)}.football-hud{font-size:11px;max-width:72vw}.football-actions button{width:52px;height:52px}}
+
 </style>
 </head>
 
@@ -209,17 +277,40 @@ footer { background: var(--card-bg); text-align: center; padding: 30px; margin-t
 <div class="card"><div class="card-icon">🏋️</div><h3>2D Halter Kaldırma</h3><p>Zamanında tuşa basıp ağırlığı kaldır!</p><button class="play-button" onclick="startGame('weight')">OYNA</button></div>
 <div class="card"><div class="card-icon">🚀</div><h3>2D Uzay Savaşçısı</h3><p>Uzaylı gemilerini lazerle yok et!</p><button class="play-button" onclick="startGame('space')">OYNA</button></div>
 <div class="card"><div class="card-icon">🚁</div><h3>2D Helikopter Kaçış</h3><p>Dar mağarada helikopteri uçur!</p><button class="play-button" onclick="startGame('heli')">OYNA</button></div>
+<div class="card"><div class="card-icon">🌴</div><h3>3D Vice City</h3><p>Gece şehrinde özgürce sür, sokakları keşfet!</p><button class="play-button" onclick="startGame('vice3d')">OYNA</button></div>
 </div>
 
 <div id="gameArea">
 <button class="back-button" onclick="closeGame()">← Oyundan Çık</button>
 <h2 id="gameTitle" style="margin-top:10px;"></h2>
 <canvas id="gameCanvas" width="700" height="400"></canvas>
+<div id="vice3dContainer"><div class="vice-hud">🌴 REAL RP • WASD/Ok: Hareket • 4: Araca Bin • 3: Araçtan Çık • 1: NPC Kavga • 2: Silah • VURUŞ: Ateş • SHIFT: Hız • R: Başlangıç</div><div id="viceHealthHud" style="position:absolute;top:15px;right:15px;z-index:6;background:rgba(0,0,0,.68);color:#fff;padding:9px 12px;border-radius:10px;font:700 15px Arial,sans-serif;min-width:150px;text-align:center;pointer-events:none;">❤️ CAN: 100/100<div style="margin-top:6px;height:10px;background:#333;border-radius:8px;overflow:hidden;"><div id="viceHealthBar" style="height:100%;width:100%;background:#2ecc71;border-radius:8px;"></div></div></div><div id="viceWeaponHud" style="margin-top:6px;font-size:13px;">🔫 SİLAH: YOK • 2: AL</div></div>
+<div id="football3dContainer">
+  <div class="football-hud" id="footballHud">🏆 KING LEAGUE 2026 • Oklar: Hareket • 1 Şut • 2 Pas • 3 Orta • 4 Ara Pas</div>
+  <div class="football-select" id="footballSelect">
+    <div class="football-select-box">
+      <h2 style="margin:0 0 5px">🏆 KING LEAGUE 2026</h2>
+      <div>Takımını seç — klavye 1-0 veya aşağıdaki mobil tuşlar</div>
+      <div class="football-team-grid" id="footballTeamGrid"></div>
+    </div>
+  </div>
+  <div class="football-actions" id="footballActions">
+    <button onclick="pressAction('1')">1<br><small>ŞUT</small></button>
+    <button onclick="pressAction('2')">2<br><small>PAS</small></button>
+    <button onclick="pressAction('3')">3<br><small>ORTA</small></button>
+    <button onclick="pressAction('4')">4<br><small>ARA</small></button>
+  </div>
+</div>
+
 <p id="gameInfo" style="font-size: 16px; font-weight: bold; margin-top: 5px;"></p>
 
 <div class="mobile-controls">
-    <div class="dpad">
+    <div class="dpad" style="display:grid;grid-template-columns:55px 55px 55px;grid-template-rows:55px 55px 55px;gap:6px;align-items:center;justify-items:center;">
+        <span></span>
+        <button class="ctrl-btn" ontouchstart="handleTouch('ArrowUp', true)" ontouchend="handleTouch('ArrowUp', false)" onmousedown="handleTouch('ArrowUp', true)" onmouseup="handleTouch('ArrowUp', false)">▲</button>
+        <span></span>
         <button class="ctrl-btn" ontouchstart="handleTouch('ArrowLeft', true)" ontouchend="handleTouch('ArrowLeft', false)" onmousedown="handleTouch('ArrowLeft', true)" onmouseup="handleTouch('ArrowLeft', false)">◀</button>
+        <button class="ctrl-btn" ontouchstart="handleTouch('ArrowDown', true)" ontouchend="handleTouch('ArrowDown', false)" onmousedown="handleTouch('ArrowDown', true)" onmouseup="handleTouch('ArrowDown', false)">▼</button>
         <button class="ctrl-btn" ontouchstart="handleTouch('ArrowRight', true)" ontouchend="handleTouch('ArrowRight', false)" onmousedown="handleTouch('ArrowRight', true)" onmouseup="handleTouch('ArrowRight', false)">▶</button>
     </div>
     <div class="action-buttons">
@@ -293,6 +384,12 @@ footer { background: var(--card-bg); text-align: center; padding: 30px; margin-t
 
 <footer>© 2026 mert TOSTMAKİNESİ TV GAME ATARİ • Mobil & PC Platformu</footer>
 
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<script>
+if (typeof THREE === "undefined") {
+  document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');
+}
+</script>
 <script>
 function showPage(page) {
     document.querySelectorAll(".page").forEach(function(item) { item.classList.remove("active"); });
@@ -329,6 +426,13 @@ let gameType = "";
 let gameRunning = false;
 let gameLoopId = null;
 let keys = {};
+let vice3D = {
+    ready:false, scene:null, camera:null, renderer:null, player:null,
+    buildings:[], cars:[], npcs:[], shops:[], palms:[], keys:{}, speed:0, yaw:0,
+    score:0, clock:null, lastTime:0, mode:"car", currentCar:null, eLatch:false, fightLatch:false, weaponLatch:false,
+    playerHeight:1.8, walkSpeed:6, carSpeed:14, spawn:{x:0,y:0,z:35}, health:100, maxHealth:100, fightTarget:null,
+    weaponEquipped:false, weapon:null, fireCooldown:0, bullets:[]
+};
 
 window.addEventListener("keydown", function(e) {
     if ([" ", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key) || ["Space", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
@@ -344,9 +448,15 @@ window.addEventListener("keyup", function(e) {
     keys[e.code] = false;
     if (e.key === " ") keys["Space"] = false;
 });
+window.addEventListener("blur", function() { keys = {}; });
+document.addEventListener("touchcancel", function() { keys = {}; });
 
 function handleTouch(keyName, isPressed) {
     keys[keyName] = isPressed;
+    if (keyName === 'ArrowUp') keys['KeyW'] = isPressed;
+    if (keyName === 'ArrowDown') keys['KeyS'] = isPressed;
+    if (keyName === 'ArrowLeft') keys['KeyA'] = isPressed;
+    if (keyName === 'ArrowRight') keys['KeyD'] = isPressed;
     if (keyName === " ") keys["Space"] = isPressed;
 }
 
@@ -377,20 +487,21 @@ let raceMaps = [
     { name: "🌆 Gece Şehri", bg: "#0f0f1a", road: "#1a1a2e", line: "#00fff0" }
 ];
 
-/* ⚽ SÜPER LİG PENALTI DÜELLOSU (TAKIM RENKLERİ & EFEKTLER) */
-let footballStep = "team_select";
-let playerTeam = null, opponentTeam = null;
-let playerGoals = 0, opponentGoals = 0, playerShotsUsed = 0, opponentShotsUsed = 0;
-let turn = "player";
-let shotAnim = { active: false, timer: 0, targetX: 350, keeperX: 350, resultText: "", flash: 0 };
-let footballTeams = [
-    { name: "Fenerbahçe", color1: "#0a192f", color2: "#ffed00" },
-    { name: "Galatasaray", color1: "#a90429", color2: "#fdb913" },
-    { name: "Beşiktaş", color1: "#111111", color2: "#ffffff" },
-    { name: "Trabzonspor", color1: "#800020", color2: "#56a0d3" },
-    { name: "Adana Demirspor", color1: "#00a8e8", color2: "#001f3f" }
+/* 🏆 KING LEAGUE 2026 - 3D FUTBOL */
+let football3D={scene:null,camera:null,renderer:null,player:null,ball:null,players:[],opponents:[],teammates:[],field:null,selected:null,last:performance.now(),score:0,stamina:100,initialized:false};
+let footballStep="team_select";
+let footballTeams=[
+ {name:"Galatasaray",color1:0xA90429,color2:0xFDB913},
+ {name:"Fenerbahçe",color1:0x001E62,color2:0xFFED00},
+ {name:"Trabzonspor",color1:0x8B1538,color2:0x5CA9E6},
+ {name:"Beşiktaş",color1:0x111111,color2:0xFFFFFF},
+ {name:"Göztepe",color1:0xF4C300,color2:0xC8102E},
+ {name:"Başakşehir",color1:0xFF6A00,color2:0x1B3D8F},
+ {name:"Samsunspor",color1:0xE30613,color2:0xFFFFFF},
+ {name:"Çaykur Rizespor",color1:0x007A33,color2:0xFFFFFF},
+ {name:"Konyaspor",color1:0x008B45,color2:0xFFFFFF},
+ {name:"Kocaelispor",color1:0x006B3C,color2:0xFFFFFF}
 ];
-
 /* DİĞER OYUN DEĞİŞKENLERİ */
 let knight = { step: "map_select", map: 0, difficulty: 1, x: 80, y: 265, hp: 100, maxHp: 100, progress: 0, attacking: false, finished: false };
 let enemy = { x: 480, y: 250, hp: 100, maxHp: 100 };
@@ -427,9 +538,10 @@ let heliGame = { heliY: 200, vy: 0, obstacles: [], score: 0, timer: 0 };
 function gameLoop() {
     if (!gameRunning) return;
 
-    if (gameType === "car") { updateCar(); drawCar(); }
+    if (gameType === "vice3d") { updateVice3D(); drawVice3D(); }
+    else if (gameType === "car") { updateCar(); drawCar(); }
     else if (gameType === "race") { updateRace(); drawRace(); }
-    else if (gameType === "football") { updateFootball(); drawFootball(); }
+    else if (gameType === "football") { updateFootball3D(); drawFootball3D(); }
     else if (gameType === "knight") { updateKnight(); drawKnight(); }
     else if (gameType === "tekken") { updateTekken(); drawTekken(); }
     else if (gameType === "gungame") { updateGunGame(); drawGunGame(); }
@@ -447,7 +559,34 @@ function startGame(type) {
     if (gameLoopId) cancelAnimationFrame(gameLoopId);
     gameType = type;
     gameRunning = true;
-    document.getElementById("gameArea").style.display = "block";
+    document.body.classList.add("game-active");
+    document.getElementById("gameArea").style.display = "flex";
+    // Tarayıcı izin verirse gerçek fullscreen de açılır; CSS fullscreen görünümü yine çalışır.
+    try {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        }
+    } catch(e) {}
+
+
+    if (type === "vice3d") {
+        document.getElementById("gameTitle").textContent = "🌴 3D VICE CITY";
+        document.getElementById("gameCanvas").style.display = "none";
+        document.getElementById("vice3dContainer").style.display = "block";
+        if (typeof THREE === "undefined") {
+            document.getElementById("gameInfo").textContent = "3D motoru yüklenemedi; güvenli mod açılıyor...";
+            startViceFallback();
+        } else {
+            initVice3D();
+            document.getElementById("gameInfo").textContent = "WASD / Ok ile hareket • 4: Araca bin • 3: Araçtan çık • 1: NPC kavga • 2: Silah • VURUŞ: Ateş • SHIFT hız • R başlangıç";
+            gameLoop();
+        }
+        return;
+    } else {
+        document.getElementById("gameCanvas").style.display = "block";
+        document.getElementById("vice3dContainer").style.display = "none";
+        document.getElementById("football3dContainer").style.display = "none";
+    }
 
     if (type === "gungame") {
         gunGame.score = 0; gunGame.targets = [];
@@ -459,10 +598,17 @@ function startGame(type) {
         document.getElementById("gameTitle").textContent = "🏁 HIZ YARIŞI (TRAFİK MODU)";
         document.getElementById("gameInfo").textContent = "1-5 tuşlarıyla araba ve harita seç!";
     } else if (type === "football") {
-        footballStep = "team_select"; playerGoals = 0; opponentGoals = 0; playerShotsUsed = 0; opponentShotsUsed = 0;
-        turn = "player"; shotAnim.active = false;
-        document.getElementById("gameTitle").textContent = "⚽ SÜPER LİG PENALTI DÜELLOSU";
-        document.getElementById("gameInfo").textContent = "1-5 tuşlarıyla takımını seç!";
+        footballStep = "team_select";
+        football3D.selected = null; football3D.score = 0; football3D.initialized = false;
+        document.getElementById("gameTitle").textContent = "🏆 KING LEAGUE 2026";
+        document.getElementById("gameInfo").textContent = "10 takımdan birini seç • Oklar: hareket • 1 Şut • 2 Pas • 3 Orta • 4 Ara Pas";
+        document.getElementById("gameCanvas").style.display = "none";
+        document.getElementById("vice3dContainer").style.display = "none";
+        document.getElementById("football3dContainer").style.display = "block";
+        document.getElementById("footballSelect").style.display = "flex";
+        document.getElementById("footballActions").style.display = "none";
+        buildFootballTeamButtons();
+        initFootball3D();
     } else if (type === "knight") {
         knight.step = "map_select"; knight.x = 80; knight.hp = 100; knight.finished = false; enemy.x = 520; enemy.hp = 100;
         document.getElementById("gameTitle").textContent = "⚔️ ŞÖVALYE: PORTAL SAVAŞI";
@@ -506,127 +652,99 @@ function startGame(type) {
 
 function closeGame() {
     gameRunning = false;
+    gameCanvasFallbackRunning = false;
     if (gameLoopId) cancelAnimationFrame(gameLoopId);
+    document.body.classList.remove("game-active");
+    if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+    }
     document.getElementById("gameArea").style.display = "none";
+    document.getElementById("gameCanvas").style.display = "block";
+    document.getElementById("vice3dContainer").style.display = "none";
+    const f3=document.getElementById("football3dContainer"); if(f3) f3.style.display="none";
 }
 
-/* ⚽ SÜPER LİG PENALTI DÜELLOSU MANTIĞI */
-function updateFootball() {
-    if (footballStep === "team_select") {
-        for (let i = 1; i <= 5; i++) {
-            if (keys[i.toString()]) {
-                playerTeam = footballTeams[i - 1];
-                let remaining = footballTeams.filter((_, idx) => idx !== (i - 1));
-                opponentTeam = remaining[Math.floor(Math.random() * remaining.length)];
-                footballStep = "playing";
-                keys[i.toString()] = false;
-                break;
-            }
-        }
-        return;
-    }
-    if (footballStep === "playing" && !shotAnim.active) {
-        if (playerShotsUsed >= 5 && opponentShotsUsed >= 5) { footballStep = "game_over"; return; }
-        if (turn === "player") {
-            let choice = keys["1"] ? 1 : (keys["2"] ? 2 : (keys["3"] ? 3 : 0));
-            if (choice > 0) { keys[choice.toString()] = false; shootPlayer(choice); }
-        } else {
-            let choice = keys["1"] ? 1 : (keys["2"] ? 2 : (keys["3"] ? 3 : 0));
-            if (choice > 0) { keys[choice.toString()] = false; defendPlayer(choice); }
-        }
-    }
-    if (shotAnim.active) {
-        shotAnim.timer--;
-        if (shotAnim.timer <= 0) { shotAnim.active = false; turn = (turn === "player") ? "opponent" : "player"; }
-    }
+/* 🏆 KING LEAGUE 2026 3D FUTBOL */
+function buildFootballTeamButtons(){
+ const grid=document.getElementById("footballTeamGrid"); if(!grid)return; grid.innerHTML="";
+ footballTeams.forEach((t,i)=>{const b=document.createElement("button");b.className="football-team-btn";b.innerHTML=`<span style="background:#${t.color1.toString(16).padStart(6,'0')}"></span>${i+1}. ${t.name}`;b.onclick=()=>selectFootballTeam(i);grid.appendChild(b);});
 }
-
-function shootPlayer(dir) {
-    playerShotsUsed++;
-    let targetX = dir === 1 ? 240 : (dir === 2 ? 350 : 460);
-    let keeperX = [240, 350, 460][Math.floor(Math.random() * 3)];
-    let isGoal = targetX !== keeperX;
-    if (isGoal) { playerGoals++; shotAnim.flash = 25; }
-    shotAnim = { active: true, timer: 90, targetX: targetX, keeperX: keeperX, resultText: isGoal ? "GOOOOOOL! ⚽🔥" : "KALECİ KURTARDI! 🧤❌", flash: isGoal ? 25 : 0 };
+function selectFootballTeam(i){
+ football3D.selected=footballTeams[i]; footballStep="playing";
+ document.getElementById("footballSelect").style.display="none"; document.getElementById("footballActions").style.display="flex";
+ setupFootballMatch();
 }
-
-function defendPlayer(dir) {
-    opponentShotsUsed++;
-    let keeperX = dir === 1 ? 240 : (dir === 2 ? 350 : 460);
-    let targetX = [240, 350, 460][Math.floor(Math.random() * 3)];
-    let isGoal = targetX !== keeperX;
-    if (isGoal) opponentGoals++;
-    shotAnim = { active: true, timer: 90, targetX: targetX, keeperX: keeperX, resultText: isGoal ? "RAKİP GOL ATTI! ⚽" : "SÜPER KURTARIŞ! 🧤🎉", flash: !isGoal ? 25 : 0 };
+function footballKeyTeam(){
+ const map={"1":0,"2":1,"3":2,"4":3,"5":4,"6":5,"7":6,"8":7,"9":8,"0":9};
+ for(const k in map){if(keys[k]){keys[k]=false;selectFootballTeam(map[k]);return;}}
 }
-
-function drawFootball() {
-    ctx.fillStyle = "#1b5e20"; ctx.fillRect(0, 0, 700, 400);
-    
-    // Kale ve File Efekti
-    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 6; ctx.strokeRect(180, 60, 340, 160);
-    ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 2;
-    for(let i=210; i<520; i+=30) { ctx.beginPath(); ctx.moveTo(i, 60); ctx.lineTo(i, 220); ctx.stroke(); }
-
-    if (footballStep === "team_select") {
-        ctx.fillStyle = "rgba(0,0,0,0.85)"; ctx.fillRect(50, 40, 600, 320);
-        ctx.fillStyle = "#fff"; ctx.font = "bold 20px Arial"; ctx.textAlign = "center";
-        ctx.fillText("SÜPER LİG TAKIMINI SEÇ (1 - 5 Tuşları)", 350, 85);
-        for (let i = 0; i < footballTeams.length; i++) {
-            ctx.fillText(`[${i+1}] ${footballTeams[i].name}`, 350, 130 + i * 45);
-        }
-        ctx.textAlign = "left";
-    } else {
-        // Skor Tablosu
-        ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(20, 15, 660, 40);
-        ctx.fillStyle = playerTeam.color2; ctx.font = "bold 16px Arial";
-        ctx.fillText(`${playerTeam.name} [ ${playerGoals} ]`, 35, 40);
-        ctx.fillStyle = "#ffffff"; ctx.fillText("VS", 335, 40);
-        ctx.fillStyle = opponentTeam.color2; ctx.textAlign = "right";
-        ctx.fillText(`[ ${opponentGoals} ] ${opponentTeam.name}`, 665, 40);
-        ctx.textAlign = "left";
-
-        // Kaleci (Rakip Takım Renklerinde Forması)
-        let displayKeeperX = shotAnim.active ? shotAnim.keeperX : 350;
-        ctx.fillStyle = "#ffdbac"; ctx.beginPath(); ctx.arc(displayKeeperX, 100, 14, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = opponentTeam.color1; ctx.fillRect(displayKeeperX - 14, 114, 28, 40);
-        ctx.fillStyle = opponentTeam.color2; ctx.fillRect(displayKeeperX - 8, 114, 16, 40); // Çubuklu/Parçalı efekt
-
-        // Şut Çeken Oyuncu (Senin Takımın Renklerinde)
-        ctx.fillStyle = "#ffdbac"; ctx.beginPath(); ctx.arc(350, 330, 14, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = playerTeam.color1; ctx.fillRect(338, 344, 24, 45);
-        ctx.fillStyle = playerTeam.color2; ctx.fillRect(344, 344, 12, 45);
-
-        // Top ve Efektler
-        if (shotAnim.active) {
-            ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(shotAnim.targetX, 210, 11, 0, Math.PI * 2); ctx.fill();
-            
-            // Gol patlama efekti
-            if(shotAnim.flash > 0) {
-                ctx.fillStyle = "rgba(255, 215, 0, 0.4)"; ctx.fillRect(180, 60, 340, 160);
-                shotAnim.flash--;
-            }
-
-            ctx.fillStyle = "#f1c40f"; ctx.font = "bold 28px Arial"; ctx.textAlign = "center";
-            ctx.fillText(shotAnim.resultText, 350, 270);
-            ctx.textAlign = "left";
-        } else {
-            ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(350, 330, 11, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = "#f1c40f"; ctx.font = "bold 15px Arial"; ctx.textAlign = "center";
-            ctx.fillText(turn === "player" ? "Şut çekmek için [1: Sol, 2: Orta, 3: Sağ] tuşuna bas!" : "Kurtarış yapmak için [1, 2, 3] tuşuna bas!", 350, 300);
-            ctx.textAlign = "left";
-        }
-
-        if (footballStep === "game_over") {
-            ctx.fillStyle = "rgba(0,0,0,0.9)"; ctx.fillRect(100, 80, 500, 240);
-            ctx.fillStyle = "#f1c40f"; ctx.font = "bold 30px Arial"; ctx.textAlign = "center";
-            ctx.fillText(playerGoals > opponentGoals ? "🏆 MAÇI KAZANDIN!" : "MAÇI KAYBETTİN!", 350, 160);
-            ctx.fillStyle = "#ffffff"; ctx.font = "bold 20px Arial";
-            ctx.fillText(`Skor: ${playerGoals} - ${opponentGoals}`, 350, 210);
-            ctx.fillText("Yeniden oynamak için sayfayı yenile veya başka oyun seç.", 350, 260);
-            ctx.textAlign = "left";
-        }
-    }
+function makeFootballPlayer(color1,color2){
+ const g=new THREE.Group();
+ const skin=new THREE.MeshStandardMaterial({color:0xf0b27a,roughness:.8});
+ const shirt=new THREE.MeshStandardMaterial({color:color1,roughness:.7});
+ const trim=new THREE.MeshStandardMaterial({color:color2,roughness:.7});
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.25,12,10),skin); head.position.y=1.75; g.add(head);
+ const body=new THREE.Mesh(new THREE.CylinderGeometry(.32,.38,.72,10),shirt); body.position.y=1.25; g.add(body);
+ const stripe=new THREE.Mesh(new THREE.BoxGeometry(.11,.7,.41),trim); stripe.position.set(0,1.25,.31); g.add(stripe);
+ const l=new THREE.Mesh(new THREE.CylinderGeometry(.09,.11,.65,8),trim),r=l.clone();l.position.set(-.15,.72,0);r.position.set(.15,.72,0);g.add(l,r);
+ const la=new THREE.Mesh(new THREE.CylinderGeometry(.07,.08,.65,8),skin),ra=la.clone();la.position.set(-.43,1.18,0);ra.position.set(.43,1.18,0);la.rotation.z=.35;ra.rotation.z=-.35;g.add(la,ra);
+ const shoe=new THREE.MeshStandardMaterial({color:0xffffff});const sl=new THREE.Mesh(new THREE.BoxGeometry(.16,.10,.30),shoe),sr=sl.clone();sl.position.set(-.15,.35,.07);sr.position.set(.15,.35,.07);g.add(sl,sr);
+ g.userData.speed=5; return g;
 }
+function initFootball3D(){
+ if(typeof THREE==='undefined'){document.getElementById("gameInfo").textContent="3D motoru yüklenemedi.";return;}
+ const box=document.getElementById("football3dContainer");
+ if(!football3D.renderer){
+  football3D.scene=new THREE.Scene(); football3D.scene.background=new THREE.Color(0x86b7df); football3D.scene.fog=new THREE.Fog(0x86b7df,45,170);
+  football3D.camera=new THREE.PerspectiveCamera(60,box.clientWidth/box.clientHeight,.1,250);
+  football3D.renderer=new THREE.WebGLRenderer({antialias:true}); football3D.renderer.setPixelRatio(Math.min(devicePixelRatio||1,2)); football3D.renderer.setSize(box.clientWidth,box.clientHeight); football3D.renderer.shadowMap.enabled=true; box.appendChild(football3D.renderer.domElement);
+  football3D.scene.add(new THREE.HemisphereLight(0xffffff,0x31512f,1.6)); const sun=new THREE.DirectionalLight(0xffffff,1.3);sun.position.set(30,60,20);sun.castShadow=true;football3D.scene.add(sun);
+  const pitch=new THREE.Mesh(new THREE.BoxGeometry(92,.25,58),new THREE.MeshStandardMaterial({color:0x16833a,roughness:.9}));pitch.position.y=0;pitch.receiveShadow=true;football3D.scene.add(pitch);football3D.field=pitch;
+  const lineMat=new THREE.MeshBasicMaterial({color:0xffffff});
+  const center=new THREE.Mesh(new THREE.RingGeometry(7.8,8,.05,64),lineMat);center.rotation.x=-Math.PI/2;center.position.y=.14;football3D.scene.add(center);
+  for(const z of [-29,29]){const line=new THREE.Mesh(new THREE.BoxGeometry(92,.05,.18),lineMat);line.position.set(0,.16,z);football3D.scene.add(line);}
+  for(const x of [-46,46]){const line=new THREE.Mesh(new THREE.BoxGeometry(.18,.05,58),lineMat);line.position.set(x,.16,0);football3D.scene.add(line);}
+  // ceza alanları ve kale
+  for(const x of [-38,38]){const boxLine=new THREE.Mesh(new THREE.BoxGeometry(16,.05,24),new THREE.MeshBasicMaterial({color:0xffffff,wireframe:true}));boxLine.position.set(x,.16,0);football3D.scene.add(boxLine);const goal=new THREE.Mesh(new THREE.BoxGeometry(.35,4.5,12),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.5}));goal.position.set(x>0?46.4:-46.4,2.25,0);football3D.scene.add(goal);}
+  // tribünler + seyirciler
+  const standMat=new THREE.MeshStandardMaterial({color:0x333844,roughness:.8});
+  for(const side of [-1,1]){const stand=new THREE.Mesh(new THREE.BoxGeometry(100,8,10),standMat);stand.position.set(0,4,side*35);football3D.scene.add(stand);for(let i=0;i<28;i++){const fan=makeFootballPlayer(0xeeeeee,0x222222);fan.scale.set(.7,.7,.7);fan.position.set(-45+i*3.3,8+(i%2)*.7,side*35);football3D.scene.add(fan);}}
+  const grassSide=new THREE.Mesh(new THREE.BoxGeometry(110,2,75),new THREE.MeshStandardMaterial({color:0x1c2430}));grassSide.position.y=-1.1;football3D.scene.add(grassSide);
+ }
+ football3D.initialized=true; resizeFootball3D();
+}
+function setupFootballMatch(){
+ football3D.players.forEach(p=>football3D.scene.remove(p));football3D.opponents.forEach(p=>football3D.scene.remove(p));football3D.teammates=[];football3D.opponents=[];football3D.players=[];
+ const t=football3D.selected, opp=footballTeams[(footballTeams.indexOf(t)+1)%footballTeams.length];
+ football3D.player=makeFootballPlayer(t.color1,t.color2);football3D.player.position.set(-8,.2,0);football3D.scene.add(football3D.player);
+ for(let i=0;i<5;i++){const p=makeFootballPlayer(t.color1,t.color2);p.position.set(-18+i*5,0,(i%3-1)*9);football3D.scene.add(p);football3D.teammates.push(p);}
+ for(let i=0;i<6;i++){const p=makeFootballPlayer(opp.color1,opp.color2);p.position.set(12+(i%3)*7,0,(i%4-1.5)*9);football3D.scene.add(p);football3D.opponents.push(p);}
+ football3D.ball=new THREE.Mesh(new THREE.SphereGeometry(.32,16,12),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.4}));football3D.ball.position.set(-6,.45,0);football3D.scene.add(football3D.ball);
+ football3D.score=0;document.getElementById("gameInfo").textContent=`${t.name} • Oklar hareket • 1 Şut • 2 Pas • 3 Orta • 4 Ara Pas`;
+}
+function footballMovePlayer(dt){
+ if(!football3D.player)return;let x=0,z=0;if(keys.ArrowLeft)x-=1;if(keys.ArrowRight)x+=1;if(keys.ArrowUp)z-=1;if(keys.ArrowDown)z+=1;
+ const len=Math.hypot(x,z)||1;if(x||z){x/=len;z/=len;football3D.player.position.x+=x*8*dt;football3D.player.position.z+=z*8*dt;football3D.player.rotation.y=Math.atan2(x,z);}
+ football3D.player.position.x=Math.max(-43,Math.min(43,football3D.player.position.x));football3D.player.position.z=Math.max(-26,Math.min(26,football3D.player.position.z));
+}
+function footballAction(a){if(!football3D.ball||!football3D.player)return;const p=football3D.player,b=football3D.ball;const dir=new THREE.Vector3(Math.sin(p.rotation.y),0,Math.cos(p.rotation.y));const near=b.position.distanceTo(p.position)<3.2;if(!near)return;
+ if(a===1){b.position.copy(p.position).add(dir.clone().multiplyScalar(1.5));b.position.y=.5;b.userData.vel=dir.clone().multiplyScalar(18);football3D.score++;}
+ if(a===2){let mate=football3D.teammates[0];let best=1e9;football3D.teammates.forEach(m=>{let d=m.position.distanceTo(p.position);if(d<best){best=d;mate=m;}});let v=mate.position.clone().sub(p.position).normalize();b.position.copy(p.position).add(v.multiplyScalar(1.4));b.position.y=.5;b.userData.vel=mate.position.clone().sub(b.position).normalize().multiplyScalar(13);}
+ if(a===3){b.position.copy(p.position).add(dir.clone().multiplyScalar(1.4));b.position.y=.7;b.userData.vel=dir.clone().multiplyScalar(12);b.userData.vel.y=7;}
+ if(a===4){b.position.copy(p.position).add(dir.clone().multiplyScalar(1.4));b.position.y=.5;b.userData.vel=dir.clone().multiplyScalar(15);}
+}
+function updateFootball3D(){
+ if(footballStep==='team_select'){footballKeyTeam();return;} if(!football3D.player)return;const now=performance.now(),dt=Math.min((now-football3D.last)/1000,.05);football3D.last=now;
+ footballMovePlayer(dt);
+ for(const o of football3D.opponents){const to=football3D.ball.position.clone().sub(o.position);to.y=0;if(to.length()>2){to.normalize();o.position.add(to.multiplyScalar(2.2*dt));o.rotation.y=Math.atan2(to.x,to.z);}}
+ if(football3D.ball.userData.vel){football3D.ball.position.add(football3D.ball.userData.vel.clone().multiplyScalar(dt));football3D.ball.userData.vel.multiplyScalar(Math.pow(.03,dt));football3D.ball.position.y=Math.max(.35,football3D.ball.position.y+((football3D.ball.userData.vel.y||0)*dt));if(football3D.ball.position.y<=.36)football3D.ball.userData.vel.y=0;}
+ if(football3D.ball.position.x>44||football3D.ball.position.x<-44||Math.abs(football3D.ball.position.z)>28){football3D.ball.position.x=Math.max(-43,Math.min(43,football3D.ball.position.x));football3D.ball.position.z=Math.max(-27,Math.min(27,football3D.ball.position.z));football3D.ball.userData.vel.set(0,0,0);}
+ const p=football3D.player.position;football3D.camera.position.lerp(new THREE.Vector3(p.x,10,p.z+14),.1);football3D.camera.lookAt(p.x,0,p.z);
+ const act=["","1 ŞUT","2 PAS","3 ORTA","4 ARA PAS"];for(let i=1;i<=4;i++)if(keys[String(i)]){keys[String(i)]=false;footballAction(i);}document.getElementById("gameInfo").textContent=`${football3D.selected.name} • Top: ${football3D.score} aksiyon • ${act[1]} | ${act[2]} | ${act[3]} | ${act[4]}`;
+}
+function drawFootball3D(){if(football3D.renderer)football3D.renderer.render(football3D.scene,football3D.camera);}
+function resizeFootball3D(){if(!football3D.renderer)return;const box=document.getElementById("football3dContainer"),w=box.clientWidth||900,h=box.clientHeight||500;football3D.camera.aspect=w/h;football3D.camera.updateProjectionMatrix();football3D.renderer.setSize(w,h);}
+window.addEventListener('resize',resizeFootball3D);
 
 /* 🏁 GELİŞMİŞ HIZ YARIŞI (TRAFİK) MANTIĞI */
 function updateRace() {
@@ -1377,6 +1495,318 @@ function drawHeli() {
         ctx.textAlign = "left";
     }
 }
+
+/* 🌴 3D VICE CITY / REAL RP - araçtan inme, NPC, mağaza ve çarpışma sistemi */
+function makeViceCar(color=0xffffff){
+    const g=new THREE.Group();
+    const bodyMat=new THREE.MeshStandardMaterial({color,metalness:.25,roughness:.32});
+    const body=new THREE.Mesh(new THREE.BoxGeometry(2.2,.65,4),bodyMat);
+    body.position.y=.75; body.castShadow=true; g.add(body);
+    const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.65,.65,1.9),new THREE.MeshStandardMaterial({color:0x172433,roughness:.25,metalness:.15}));
+    cabin.position.set(0,1.25,-.15); cabin.castShadow=true; g.add(cabin);
+    const tireMat=new THREE.MeshStandardMaterial({color:0x111111,roughness:.8});
+    const rimMat=new THREE.MeshStandardMaterial({color:0xd9dde2,metalness:.85,roughness:.22});
+    const hubMat=new THREE.MeshStandardMaterial({color:0x777d85,metalness:.9,roughness:.18});
+    for(const x of [-1.05,1.05]) for(const z of [-1.35,1.35]){
+        const w=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,.28,20),tireMat);
+        w.rotation.z=Math.PI/2; w.position.set(x,.45,z); w.castShadow=true; g.add(w);
+        const rim=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.30,16),rimMat);
+        rim.rotation.z=Math.PI/2; rim.position.set(x,.45,z); rim.castShadow=true; g.add(rim);
+        const hub=new THREE.Mesh(new THREE.CylinderGeometry(.075,.075,.32,12),hubMat);
+        hub.rotation.z=Math.PI/2; hub.position.set(x,.45,z); g.add(hub);
+    }
+    return g;
+}
+
+/* Referans görseldeki gibi daha dolu, farklı kıyafetli düşük poligon NPC */
+function makeVicePerson(shirt=0x3498db,pants=0x22252b,skinColor=0xd99a72,shoe=0x222222,shorts=false){
+    const g=new THREE.Group();
+    const skin=new THREE.MeshStandardMaterial({color:skinColor,roughness:.75});
+    const shirtMat=new THREE.MeshStandardMaterial({color:shirt,roughness:.65});
+    const pantsMat=new THREE.MeshStandardMaterial({color:pants,roughness:.8});
+    const shoeMat=new THREE.MeshStandardMaterial({color:shoe,roughness:.75});
+
+    const torso=new THREE.Mesh(new THREE.CylinderGeometry(.32,.38,.85,12),shirtMat);
+    torso.position.y=1.0; torso.castShadow=true; g.add(torso);
+    const neck=new THREE.Mesh(new THREE.CylinderGeometry(.11,.12,.18,10),skin);
+    neck.position.y=1.48; g.add(neck);
+    const head=new THREE.Mesh(new THREE.SphereGeometry(.29,18,14),skin);
+    head.position.y=1.75; head.castShadow=true; g.add(head);
+    const hair=new THREE.Mesh(new THREE.SphereGeometry(.30,16,10,0,Math.PI*2,0,Math.PI*.52),new THREE.MeshStandardMaterial({color:[0x24170f,0x3b2416,0x111111][Math.floor(Math.random()*3)],roughness:.9}));
+    hair.position.set(0,1.86,0); hair.castShadow=true; g.add(hair);
+
+    const eyeMat=new THREE.MeshStandardMaterial({color:0x202020,roughness:.3});
+    for(const x of [-.105,.105]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.035,8,8),eyeMat);eye.position.set(x,1.78,.265);g.add(eye);}
+    const nose=new THREE.Mesh(new THREE.ConeGeometry(.035,.10,8),skin);nose.rotation.x=Math.PI/2;nose.position.set(0,1.70,.28);g.add(nose);
+
+    const armL=new THREE.Mesh(new THREE.CylinderGeometry(.105,.12,.68,10),skin);armL.position.set(-.42,1.0,0);armL.rotation.z=-.12;armL.castShadow=true;g.add(armL);
+    const armR=new THREE.Mesh(new THREE.CylinderGeometry(.105,.12,.68,10),skin);armR.position.set(.42,1.0,0);armR.rotation.z=.12;armR.castShadow=true;g.add(armR);
+    const handL=new THREE.Mesh(new THREE.SphereGeometry(.12,10,8),skin);handL.position.set(-.46,.66,0);g.add(handL);
+    const handR=new THREE.Mesh(new THREE.SphereGeometry(.12,10,8),skin);handR.position.set(.46,.66,0);g.add(handR);
+
+    const legMat=shorts?new THREE.MeshStandardMaterial({color:pants,roughness:.78}):pantsMat;
+    const leftLeg=new THREE.Mesh(new THREE.BoxGeometry(.20,shorts?.52:.72,.30),legMat);
+    const rightLeg=new THREE.Mesh(new THREE.BoxGeometry(.20,shorts?.52:.72,.30),legMat);
+    leftLeg.position.set(-.13,shorts?.42:.24,0);rightLeg.position.set(.13,shorts?.42:.24,0);
+    leftLeg.castShadow=true;rightLeg.castShadow=true;g.add(leftLeg);g.add(rightLeg);
+    const leftShoe=new THREE.Mesh(new THREE.BoxGeometry(.30,.16,.52),shoeMat);leftShoe.position.set(-.13,.07,.08);leftShoe.castShadow=true;g.add(leftShoe);
+    const rightShoe=new THREE.Mesh(new THREE.BoxGeometry(.30,.16,.52),shoeMat);rightShoe.position.set(.13,.07,.08);rightShoe.castShadow=true;g.add(rightShoe);
+
+    g.userData.legs=[leftLeg,rightLeg];g.userData.arms=[armL,armR];g.userData.hands=[handL,handR];g.userData.walkPhase=Math.random()*Math.PI*2;
+    return g;
+}
+function initVice3D() {
+    if (typeof THREE === "undefined") { document.getElementById("gameInfo").textContent="3D motoru yüklenemedi. İnternet bağlantısını kontrol et."; return; }
+    const box=document.getElementById("vice3dContainer");
+    if(!vice3D.renderer){
+        vice3D.scene=new THREE.Scene(); vice3D.scene.background=new THREE.Color(0x11152a); vice3D.scene.fog=new THREE.Fog(0x11152a,55,300);
+        vice3D.camera=new THREE.PerspectiveCamera(65,box.clientWidth/box.clientHeight,.1,400);
+        vice3D.renderer=new THREE.WebGLRenderer({antialias:true}); vice3D.renderer.setPixelRatio(Math.min(devicePixelRatio||1,2)); vice3D.renderer.setSize(box.clientWidth,box.clientHeight); vice3D.renderer.shadowMap.enabled=true; box.appendChild(vice3D.renderer.domElement);
+        vice3D.scene.add(new THREE.HemisphereLight(0x8899cc,0x182010,1.35)); const moon=new THREE.DirectionalLight(0xffffff,1.15); moon.position.set(-30,40,20); moon.castShadow=true; vice3D.scene.add(moon);
+        const ground=new THREE.Mesh(new THREE.PlaneGeometry(360,360),new THREE.MeshStandardMaterial({color:0x30353a,roughness:.95})); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; vice3D.scene.add(ground);
+        const roadMat=new THREE.MeshStandardMaterial({color:0x171a1e,roughness:.9});
+        for(let i=-120;i<=120;i+=40){let a=new THREE.Mesh(new THREE.BoxGeometry(16,.08,300),roadMat);a.position.set(i,.04,0);vice3D.scene.add(a);let b=new THREE.Mesh(new THREE.BoxGeometry(300,.08,16),roadMat);b.position.set(0,.05,i);vice3D.scene.add(b);}
+        const lineMat=new THREE.MeshBasicMaterial({color:0xf2df67});
+        for(let x=-120;x<=120;x+=40) for(let z=-135;z<=135;z+=16){let a=new THREE.Mesh(new THREE.BoxGeometry(.22,.1,6),lineMat);a.position.set(x,.11,z);vice3D.scene.add(a);let b=new THREE.Mesh(new THREE.BoxGeometry(6,.1,.22),lineMat);b.position.set(z,.11,x);vice3D.scene.add(b);}
+        const colors=[0x27364a,0x49314f,0x24474d,0x4b3b2c,0x303842,0x573149];
+        for(let x=-100;x<=100;x+=40) for(let z=-100;z<=100;z+=40){
+            const bx=x+20,bz=z+20,h=8+Math.random()*18,w=12+Math.random()*5,d=12+Math.random()*5;
+            const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:colors[Math.floor(Math.random()*colors.length)],roughness:.8}));
+            b.position.set(bx+(Math.random()*3-1.5),h/2,bz+(Math.random()*3-1.5));b.castShadow=true;b.receiveShadow=true;vice3D.scene.add(b);b.userData.halfX=w/2+.9;b.userData.halfZ=d/2+.9;vice3D.buildings.push(b);
+            /* Ev pencereleri */
+            const windowMat=new THREE.MeshStandardMaterial({color:0x8ed8ff,emissive:0x163b55,roughness:.28,metalness:.12});
+            const windowRows=Math.max(1,Math.floor(h/3.2)),windowCols=Math.max(2,Math.floor(w/3));
+            for(let row=0;row<windowRows;row++) for(let col=0;col<windowCols;col++){
+                const wx=b.position.x-w/2+.9+col*((w-1.8)/Math.max(1,windowCols-1)),wy=2+row*3;if(wy>h-1)continue;
+                const win=new THREE.Mesh(new THREE.BoxGeometry(.75,.95,.08),windowMat);win.position.set(wx,wy,b.position.z-d/2-.045);vice3D.scene.add(win);
+                const win2=win.clone();win2.position.z=b.position.z+d/2+.045;win2.rotation.y=Math.PI;vice3D.scene.add(win2);
+            }
+            for(let row=0;row<windowRows;row++) for(const side of [-1,1]){
+                const win=new THREE.Mesh(new THREE.BoxGeometry(.08,.95,.75),windowMat);win.position.set(b.position.x+side*(w/2+.045),2+row*3,b.position.z);win.rotation.y=Math.PI/2;vice3D.scene.add(win);
+            }
+            const shop=new THREE.Mesh(new THREE.BoxGeometry(Math.min(w*.72,6),2.4,.22),new THREE.MeshStandardMaterial({color:[0xff2ea6,0x21d4ff,0xffc107][Math.floor(Math.random()*3)],emissive:[0x55103e,0x073d4a,0x4a3500][Math.floor(Math.random()*3)]}));
+            shop.position.set(b.position.x,1.3,b.position.z-d/2-.13);vice3D.scene.add(shop);vice3D.shops.push(shop);
+        }
+        for(let i=0;i<28;i++){const x=(Math.floor(Math.random()*12)-6)*20+8,z=(Math.floor(Math.random()*12)-6)*20+8;const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.35,.5,5,8),new THREE.MeshStandardMaterial({color:0x704b2d}));trunk.position.set(x,2.5,z);vice3D.scene.add(trunk);for(let a=0;a<7;a++){const leaf=new THREE.Mesh(new THREE.BoxGeometry(.25,.18,4),new THREE.MeshStandardMaterial({color:0x26733b}));leaf.position.set(x+Math.sin(a)*1.4,5,z+Math.cos(a)*1.4);leaf.rotation.y=a*Math.PI/3.5;vice3D.scene.add(leaf);}}
+
+        /* Trafik: oyuncu arabası beyaz; NPC arabaları farklı ama pembe yok. */
+        const trafficColors=[0x2f6fed,0xf1c40f,0xffffff,0x222222,0x2ecc71,0x9aa0a6];
+        for(let i=0;i<18;i++){const c=makeViceCar(trafficColors[i%trafficColors.length]);c.position.set([-60,-20,20,60][i%4],0,-90+i*10);c.userData.speed=5+Math.random()*5;c.userData.drivable=true;c.userData.npcDriving=true;c.userData.parked=i<6;c.userData.radius=2.1;vice3D.scene.add(c);vice3D.cars.push(c);}
+
+        /* Referans görseldeki gibi 14 farklı görünümlü şehir NPC'si */
+        const npcLooks=[
+            [0xe74c3c,0x1689a8,0xd99a72,0x222222,false],[0xf2f2f2,0x24527a,0xb87952,0x222222,true],
+            [0xf4511e,0x304d2b,0xd99a72,0x333333,false],[0x263238,0x263b5a,0xc58a63,0x111111,false],
+            [0xd6a04b,0xc83f35,0xb87952,0x333333,true],[0x6c8f4a,0x795548,0xd99a72,0x4d3428,false],
+            [0x1976a3,0x263238,0xf0c39a,0x222222,false],[0xffb300,0x263238,0xd99a72,0x7b4f2c,false],
+            [0x43a047,0x8d6e63,0xb87952,0x5d4037,true],[0xffffff,0x34515e,0xd99a72,0x222222,false],
+            [0x1565c0,0x455a64,0x8d5524,0x111111,false],[0xe53935,0x1b5e20,0xd99a72,0x222222,true],
+            [0x37474f,0x263238,0xf0c39a,0x111111,false],[0x00acc1,0x5d4037,0xb87952,0x333333,true]
+        ];
+        for(let i=0;i<30;i++){const look=npcLooks[i%npcLooks.length];const n=makeVicePerson(...look);n.position.set((Math.random()*240)-120,0,(Math.random()*240)-120);n.userData.dir=Math.random()*Math.PI*2;n.userData.speed=1.2+Math.random()*1.5;n.userData.radius=.7;n.userData.hp=100;n.userData.maxHp=100;n.userData.fightFlash=0;n.userData.punchTimer=0;n.userData.attackCooldown=0;n.userData.agro=false;vice3D.scene.add(n);vice3D.npcs.push(n);}
+
+        /* Güvenli başlangıç: yol üzerinde, binaların içine girmeyen konum. */
+        vice3D.spawn=new THREE.Vector3(20,0,40);
+        vice3D.player=makeViceCar(0xffffff);vice3D.player.position.copy(vice3D.spawn);vice3D.player.userData.drivable=true;vice3D.player.userData.isPlayerCar=true;vice3D.scene.add(vice3D.player);vice3D.health=vice3D.maxHealth;updateViceHealthHud();
+        vice3D.clock=new THREE.Clock();window.addEventListener('resize',resizeVice3D);resizeVice3D();
+    }
+    /* Her yeniden girişte de güvenli beyaz araç spawn'ı korunur. */
+    vice3D.mode="car";vice3D.currentCar=vice3D.player;vice3D.player.position.copy(vice3D.spawn);vice3D.player.visible=true;if(vice3D.walker)vice3D.walker.visible=false;if(vice3D.weapon)vice3D.weapon.visible=false;vice3D.weaponEquipped=false;vice3D.lastTime=performance.now();
+}
+
+function resizeVice3D(){if(!vice3D.renderer)return;const box=document.getElementById('vice3dContainer'),w=box.clientWidth||900,h=box.clientHeight||500;vice3D.camera.aspect=w/h;vice3D.camera.updateProjectionMatrix();vice3D.renderer.setSize(w,h);}
+function viceBlocked(pos,r=.9){for(const b of vice3D.buildings){if(Math.abs(pos.x-b.position.x)<b.userData.halfX+r&&Math.abs(pos.z-b.position.z)<b.userData.halfZ+r)return true;}return false;}
+function viceMove(obj,dx,dz,r){const nx=obj.position.clone();nx.x+=dx;if(!viceBlocked(nx,r))obj.position.x=nx.x;const nz=obj.position.clone();nz.z+=dz;if(!viceBlocked(nz,r))obj.position.z=nz.z;obj.position.x=Math.max(-148,Math.min(148,obj.position.x));obj.position.z=Math.max(-148,Math.min(148,obj.position.z));}
+function viceNearestCar(){let best=null,bd=4.8;for(const c of vice3D.cars){const d=c.position.distanceTo(vice3D.player.position);if(c.userData.drivable&&d<bd){best=c;bd=d;}}return best;}
+function viceEnterCar(){
+    const c=viceNearestCar();if(!c)return;
+    vice3D.mode="car";vice3D.currentCar=c;c.userData.npcDriving=false;
+    c.position.copy(vice3D.walker?vice3D.walker.position:vice3D.player.position);c.rotation.y=vice3D.walker?vice3D.walker.rotation.y:vice3D.player.rotation.y;
+    vice3D.player.position.copy(c.position);vice3D.player.rotation.y=c.rotation.y;vice3D.player.visible=true;if(vice3D.walker){vice3D.walker.visible=false;if(vice3D.weapon)vice3D.weapon.visible=false;}
+}
+function viceExitCar(){
+    if(vice3D.mode!=="car"||!vice3D.currentCar)return;
+    if(!vice3D.walker){vice3D.walker=makeVicePerson(0x3498db,0x263238);vice3D.scene.add(vice3D.walker);}
+    const side=new THREE.Vector3(2.6,0,0).applyAxisAngle(new THREE.Vector3(0,1,0),vice3D.currentCar.rotation.y);
+    vice3D.walker.position.copy(vice3D.currentCar.position).add(side);
+    if(viceBlocked(vice3D.walker.position,.75))vice3D.walker.position.copy(vice3D.currentCar.position).add(side.multiplyScalar(-1));
+    vice3D.walker.rotation.y=vice3D.currentCar.rotation.y;vice3D.mode="walk";vice3D.currentCar=null;vice3D.player.position.copy(vice3D.walker.position);vice3D.player.visible=false;vice3D.walker.visible=true;viceSetWeapon(vice3D.weaponEquipped);
+}
+function viceFightNPC(){
+    if(vice3D.mode!=="walk"||!vice3D.walker)return;
+    let target=null,bd=2.7;for(const n of vice3D.npcs){const d=n.position.distanceTo(vice3D.walker.position);if(d<bd){target=n;bd=d;}}
+    if(!target)return;vice3D.fightTarget=target;target.userData.hp=Math.max(0,target.userData.hp-25);target.userData.fightFlash=12;
+    if(target.userData.hp<=0){target.position.set((Math.random()*240)-120,0,(Math.random()*240)-120);target.userData.hp=target.userData.maxHp;}
+}
+function viceSetWeapon(on){
+    if(!vice3D.walker)return;
+    vice3D.weaponEquipped=!!on;
+    if(!vice3D.weapon){
+        const g=new THREE.Group();
+        const dark=new THREE.MeshStandardMaterial({color:0x202020,metalness:.75,roughness:.25});
+        const grip=new THREE.Mesh(new THREE.BoxGeometry(.12,.38,.16),dark);
+        grip.position.set(.32,.88,-.18);
+        const barrel=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,.55,10),dark);
+        barrel.rotation.x=Math.PI/2;
+        barrel.position.set(.32,.99,-.46);
+        g.add(grip,barrel);
+        g.visible=false;
+        vice3D.walker.add(g);
+        vice3D.weapon=g;
+    }
+    vice3D.weapon.visible=vice3D.weaponEquipped && vice3D.mode==="walk";
+}
+function viceShoot(){
+    if(vice3D.mode!=="walk"||!vice3D.walker||!vice3D.weaponEquipped||vice3D.fireCooldown>0)return;
+    vice3D.fireCooldown=.28;
+    const origin=vice3D.walker.position.clone(); origin.y+=1.05;
+    const forward=new THREE.Vector3(Math.sin(vice3D.walker.rotation.y),0,Math.cos(vice3D.walker.rotation.y));
+    let target=null,best=14;
+    // Mermileri hareket ettir ve NPC'lere çarpınca kaldır.
+    for(let i=vice3D.bullets.length-1;i>=0;i--){
+        const b=vice3D.bullets[i];
+        b.position.addScaledVector(b.userData.velocity,dt); b.userData.life-=dt;
+        let hit=false;
+        for(const n of vice3D.npcs){
+            if(n.userData.hp>0 && b.position.distanceTo(n.position.clone().setY(1.05))<.75){
+                n.userData.hp=Math.max(0,n.userData.hp-b.userData.damage); n.userData.fightFlash=10; n.userData.agro=true; hit=true; break;
+            }
+        }
+        if(hit||b.userData.life<=0||Math.abs(b.position.x)>170||Math.abs(b.position.z)>170){
+            if(b.parent)b.parent.remove(b); vice3D.bullets.splice(i,1);
+        }
+    }
+
+    for(const n of vice3D.npcs){
+        if(n.userData.hp<=0)continue;
+        const to=n.position.clone().sub(origin); to.y=0;
+        const dist=to.length();
+        if(dist>14||dist<.2)continue;
+        const dir=to.normalize();
+        const dot=forward.dot(dir);
+        if(dot>.82 && dist<best){target=n;best=dist;}
+    }
+    // Görünür mermi oluştur.
+    const bullet=new THREE.Mesh(new THREE.SphereGeometry(.065,8,8),new THREE.MeshBasicMaterial({color:0xffd84d}));
+    const muzzle=new THREE.Vector3(.32,1.02,-.72).applyMatrix4(vice3D.walker.matrixWorld);
+    bullet.position.copy(muzzle);
+    const velocity=forward.clone().multiplyScalar(38);
+    bullet.userData={velocity:velocity,life:1.0,damage:25};
+    vice3D.scene.add(bullet); vice3D.bullets.push(bullet);
+    // Kısa namlu alevi.
+    const flash=new THREE.Mesh(new THREE.SphereGeometry(.12,8,8),new THREE.MeshBasicMaterial({color:0xff8c00}));
+    flash.position.copy(muzzle); flash.userData.life=.07; vice3D.scene.add(flash);
+    setTimeout(()=>{if(flash.parent)flash.parent.remove(flash);},90);
+    if(target){
+        target.userData.hp=Math.max(0,target.userData.hp-25);
+        target.userData.fightFlash=10;
+        target.userData.agro=true;
+        if(target.userData.hp<=0){
+            target.position.set((Math.random()*240)-120,0,(Math.random()*240)-120);
+            target.userData.hp=target.userData.maxHp;
+            target.userData.agro=false;
+        }
+    }
+}
+function updateViceHealthHud(){
+    const h=Math.max(0,Math.min(vice3D.maxHealth,Math.round(vice3D.health)));const hud=document.getElementById("viceHealthHud"),bar=document.getElementById("viceHealthBar");
+    if(hud)hud.firstChild.textContent="❤️ CAN: "+h+"/"+vice3D.maxHealth;if(bar)bar.style.width=(h/vice3D.maxHealth*100)+"%";
+    const wh=document.getElementById("viceWeaponHud");if(wh)wh.textContent=vice3D.weaponEquipped?"🔫 SİLAH: AKTİF • VURUŞ: ATEŞ":"🔫 SİLAH: YOK • 2: AL";
+}
+function updateVice3D(){
+    if(!vice3D.player||!vice3D.renderer)return;const now=performance.now(),dt=Math.min((now-vice3D.lastTime)/1000,.05);vice3D.lastTime=now;
+    // REAL RP kontrolleri: 4 bin, 3 çık, 1 kavga, 2 silah, VURUŞ ateş.
+    if(keys["4"]&&!vice3D.eLatch){vice3D.eLatch=true;viceEnterCar();}
+    if(keys["3"]&&!vice3D.eLatch){vice3D.eLatch=true;viceExitCar();}
+    if(keys["1"]&&!vice3D.fightLatch){vice3D.fightLatch=true;viceFightNPC();}
+    if(!keys["1"])vice3D.fightLatch=false;
+    if(keys["2"]&&!vice3D.weaponLatch){
+        vice3D.weaponLatch=true;
+        if(vice3D.mode==="walk")viceSetWeapon(!vice3D.weaponEquipped);
+    }
+    if(!keys["2"])vice3D.weaponLatch=false;
+    if(keys[" "]||keys["Space"])viceShoot();
+    vice3D.fireCooldown=Math.max(0,vice3D.fireCooldown-dt);
+    if(!keys["3"]&&!keys["4"]&&!keys["KeyE"]&&!keys["e"])vice3D.eLatch=false;
+    // PC'de E de çalışmaya devam etsin.
+    if((keys['KeyE']||keys['e'])&&!vice3D.eLatch){vice3D.eLatch=true;vice3D.mode==='car'?viceExitCar():viceEnterCar();}
+    if(keys['KeyR']||keys['r']){keys['KeyR']=false;keys['r']=false;vice3D.mode='car';vice3D.currentCar=vice3D.player;vice3D.player.visible=true;vice3D.player.position.copy(vice3D.spawn);if(vice3D.weapon)vice3D.weapon.visible=false;vice3D.health=vice3D.maxHealth;updateViceHealthHud();}
+    const f=!!(keys['KeyW']||keys['w']||keys['ArrowUp']||keys['W']),back=!!(keys['KeyS']||keys['s']||keys['ArrowDown']||keys['S']),l=!!(keys['KeyA']||keys['a']||keys['ArrowLeft']||keys['A']),r=!!(keys['KeyD']||keys['d']||keys['ArrowRight']||keys['D']);
+    if(vice3D.mode==='car'){
+        if(vice3D.walker)vice3D.walker.visible=false;const car=vice3D.currentCar||vice3D.player;const speed=(keys['ShiftLeft']||keys['ShiftRight'])?28:18;
+        if(l)car.rotation.y+=1.8*dt;if(r)car.rotation.y-=1.8*dt;
+        // Yön düzeltmesi: W/↑ gerçek ileri, S/↓ gerçek geri.
+        const amount=(f?speed:0)-(back?speed*.55:0);if(amount)viceMove(car,Math.sin(car.rotation.y)*amount*dt,Math.cos(car.rotation.y)*amount*dt,2.0);
+        vice3D.player.position.copy(car.position);vice3D.player.rotation.y=car.rotation.y;vice3D.score+=Math.abs(amount)*dt;
+    }else{
+        vice3D.player.visible=false;if(!vice3D.walker){vice3D.walker=makeVicePerson(0x3498db,0x263238);vice3D.walker.position.copy(vice3D.player.position);vice3D.scene.add(vice3D.walker);}
+        vice3D.walker.visible=true;const p=vice3D.walker,ws=vice3D.walkSpeed;
+        if(l&&!r)p.rotation.y+=2.5*dt;
+        if(r&&!l)p.rotation.y-=2.5*dt;
+        const amount=(f?ws:0)-(back?ws*.65:0);
+        if(amount)viceMove(p,Math.sin(p.rotation.y)*amount*dt,Math.cos(p.rotation.y)*amount*dt,.75);
+        vice3D.player.position.copy(p.position);vice3D.player.rotation.y=p.rotation.y;viceSetWeapon(vice3D.weaponEquipped);
+        if(p.userData.legs){const moving=Math.abs(amount)>0;if(moving)p.userData.walkPhase+=dt*10;const swing=moving?Math.sin(p.userData.walkPhase)*0.55:0;p.userData.legs[0].rotation.x=swing;p.userData.legs[1].rotation.x=-swing;}
+    }
+    for(const c of vice3D.cars){if(c===vice3D.currentCar)continue;if(c.userData.npcDriving){c.position.z+=c.userData.speed*dt;if(c.position.z>148)c.position.z=-148;}}
+    for(const n of vice3D.npcs){
+        const playerPos=vice3D.mode==='walk'&&vice3D.walker?vice3D.walker.position:null;
+        const distToPlayer=playerPos?n.position.distanceTo(playerPos):999;
+        if(playerPos&&n.userData.hp>0&&distToPlayer<14){
+            n.userData.agro=true;
+            const to=playerPos.clone().sub(n.position);to.y=0;
+            if(distToPlayer>2.1){
+                n.userData.dir=Math.atan2(to.x,to.z);
+                n.position.x+=Math.sin(n.userData.dir)*Math.min(n.userData.speed*1.55,5)*dt;
+                n.position.z+=Math.cos(n.userData.dir)*Math.min(n.userData.speed*1.55,5)*dt;
+            }else{
+                n.userData.attackCooldown=Math.max(0,(n.userData.attackCooldown||0)-dt);
+                if(n.userData.attackCooldown<=0){
+                    n.userData.attackCooldown=.8;
+                    vice3D.health=Math.max(0,vice3D.health-8);
+                    n.userData.fightFlash=.35;
+                    n.userData.punchTimer=.35;
+                    updateViceHealthHud();
+                }
+            }
+        }else{
+            n.userData.agro=false;
+            n.position.x+=Math.sin(n.userData.dir)*n.userData.speed*dt;
+            n.position.z+=Math.cos(n.userData.dir)*n.userData.speed*dt;
+        }
+        n.rotation.y=n.userData.dir;
+        n.userData.walkPhase=(n.userData.walkPhase||0)+dt*8;
+        if(n.userData.fightFlash>0)n.userData.fightFlash=Math.max(0,n.userData.fightFlash-dt);
+        if(n.userData.punchTimer>0){
+            n.userData.punchTimer=Math.max(0,n.userData.punchTimer-dt);
+            const t=1-n.userData.punchTimer/.35;
+            const punch=Math.sin(Math.min(1,t)*Math.PI)*1.15;
+            if(n.userData.arms){n.userData.arms[0].rotation.z=-.12-punch*.75;n.userData.arms[1].rotation.z=.12+punch*.75;}
+        }else if(n.userData.arms){n.userData.arms[0].rotation.z=-.12;n.userData.arms[1].rotation.z=.12;}
+        if(n.userData.legs){const swing=Math.sin(n.userData.walkPhase)*0.45;n.userData.legs[0].rotation.x=swing;n.userData.legs[1].rotation.x=-swing;}
+        if(Math.abs(n.position.x)>148||Math.abs(n.position.z)>148)n.userData.dir+=Math.PI;
+    }
+    if(vice3D.health<=0){vice3D.health=vice3D.maxHealth;vice3D.mode='car';vice3D.currentCar=vice3D.player;vice3D.player.visible=true;vice3D.player.position.copy(vice3D.spawn);updateViceHealthHud();}
+    const target=(vice3D.mode==='car'?vice3D.currentCar:vice3D.walker),p=target.position;const behind=new THREE.Vector3(0,vice3D.mode==='car'?4.8:3.5,vice3D.mode==='car'?-8:-6).applyAxisAngle(new THREE.Vector3(0,1,0),target.rotation.y);vice3D.camera.position.lerp(p.clone().add(behind),.12);vice3D.camera.lookAt(p.x,p.y+(vice3D.mode==='car'?1.2:1.0),p.z);
+    const near=viceNearestCar();document.getElementById('gameInfo').textContent=vice3D.mode==='car'?'🚗 Araçtasın • WASD/Ok • 3: Araçtan çık • 2: Silah • SHIFT hız • R başlangıç':(near?'🚶 Yayadasın • WASD/Ok • 4: Araca bin • 1: Kavga • 2: Silah • VURUŞ: Ateş':'🚶 Yayadasın • WASD/Ok • 4: Araca bin • 1: Kavga • 2: Silah • VURUŞ: Ateş • R başlangıç');
+}
+function startViceFallback(){
+    const c=document.getElementById('gameCanvas'); c.style.display='block'; document.getElementById('vice3dContainer').style.display='none';
+    gameCanvasFallbackRunning=true; fallbackX=350; fallbackY=250; requestAnimationFrame(fallbackLoop);
+}
+let gameCanvasFallbackRunning=false,fallbackX=350,fallbackY=250;
+function fallbackLoop(){
+    if(!gameCanvasFallbackRunning||gameType!=='vice3d'||!gameRunning)return;
+    ctx.fillStyle='#10152b';ctx.fillRect(0,0,700,400);
+    ctx.fillStyle='#e56ca8';ctx.fillRect(0,0,700,145);
+    ctx.fillStyle='#30343a';ctx.fillRect(0,145,700,255);
+    ctx.strokeStyle='#f5d76e';ctx.lineWidth=4;ctx.setLineDash([30,20]);ctx.beginPath();ctx.moveTo(350,145);ctx.lineTo(350,400);ctx.stroke();ctx.setLineDash([]);
+    for(let i=-2;i<=2;i++){let x=350+i*145;ctx.fillStyle=i%2?'#3b304d':'#263b46';ctx.fillRect(x-45,75,90,70);ctx.fillStyle='#ffd34d';for(let w=0;w<3;w++)ctx.fillRect(x-30+w*22,100,10,12);}
+    ctx.save();ctx.translate(fallbackX,fallbackY);ctx.fillStyle='#ffffff';ctx.fillRect(-20,-35,40,70);ctx.fillStyle='#111';ctx.fillRect(-14,-20,28,18);ctx.fillStyle='#eee';ctx.fillRect(-15,28,10,8);ctx.fillRect(5,28,10,8);ctx.restore();
+    if(keys['ArrowLeft']||keys['a']||keys['A'])fallbackX=Math.max(35,fallbackX-5);if(keys['ArrowRight']||keys['d']||keys['D'])fallbackX=Math.min(665,fallbackX+5);if(keys['ArrowUp']||keys['w']||keys['W'])fallbackY=Math.max(175,fallbackY-5);if(keys['ArrowDown']||keys['s']||keys['S'])fallbackY=Math.min(380,fallbackY+5);
+    document.getElementById('gameInfo').textContent='🌴 Güvenli şehir modu • WASD / Ok ile hareket';requestAnimationFrame(fallbackLoop);
+}
+function drawVice3D(){if(vice3D.renderer)vice3D.renderer.render(vice3D.scene,vice3D.camera);}
 </script>
 
 </body>
