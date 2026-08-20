@@ -238,6 +238,100 @@ body.game-active footer { display: none !important; }
 .football-actions button{width:58px;height:58px;border-radius:50%;border:2px solid #fff;background:rgba(20,30,45,.8);color:#fff;font-weight:900;font-size:15px;touch-action:manipulation;}
 @media(max-width:600px){.football-team-grid{grid-template-columns:repeat(2,1fr)}#football3dContainer{height:calc(100vh - 75px)}.football-hud{font-size:11px;max-width:72vw}.football-actions button{width:52px;height:52px}}
 
+
+/* ===== KING LEAGUE 2026 YENİ MENÜ ===== */
+header{
+  background:linear-gradient(135deg,#07111f 0%,#0b2440 55%,#087fbd 100%) !important;
+  border-bottom:2px solid #19bfff;
+  padding:16px 24px !important;
+  position:sticky;
+  top:0;
+  z-index:9999;
+  box-shadow:0 8px 25px rgba(0,0,0,.28);
+}
+header .logo, header h1{
+  font-weight:900 !important;
+  letter-spacing:1.5px;
+  text-shadow:0 3px 12px rgba(25,191,255,.45);
+}
+nav{
+  display:flex !important;
+  gap:10px !important;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+nav button, header nav a{
+  border:1px solid rgba(255,255,255,.18) !important;
+  background:rgba(255,255,255,.08) !important;
+  color:#fff !important;
+  border-radius:12px !important;
+  padding:10px 16px !important;
+  font-weight:800 !important;
+  cursor:pointer;
+  transition:.2s ease;
+  backdrop-filter:blur(8px);
+}
+nav button:hover, header nav a:hover{
+  transform:translateY(-2px);
+  background:#087fbd !important;
+  border-color:#38c9ff !important;
+  box-shadow:0 5px 16px rgba(0,174,255,.3);
+}
+nav button.active, header nav a.active{
+  background:linear-gradient(135deg,#087fbd,#10b9ee) !important;
+  border-color:#63d7ff !important;
+  box-shadow:0 4px 15px rgba(0,174,255,.4);
+}
+.site-hero{
+  max-width:1150px;
+  margin:28px auto 18px;
+  padding:32px;
+  border-radius:24px;
+  background:linear-gradient(135deg,rgba(5,18,35,.96),rgba(8,72,115,.92));
+  border:1px solid rgba(55,202,255,.35);
+  box-shadow:0 15px 40px rgba(0,0,0,.25);
+}
+.site-hero h2{
+  font-size:clamp(30px,5vw,52px);
+  margin-bottom:8px;
+}
+.site-hero p{
+  opacity:.82;
+  font-size:17px;
+}
+.menu-grid{
+  max-width:1150px;
+  margin:20px auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:16px;
+}
+.menu-card{
+  padding:22px;
+  min-height:130px;
+  border-radius:20px;
+  background:rgba(6,24,43,.82);
+  border:1px solid rgba(255,255,255,.1);
+  transition:.2s ease;
+}
+.menu-card:hover{
+  transform:translateY(-4px);
+  border-color:#22c4ff;
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
+}
+.menu-card .icon{
+  font-size:32px;
+  margin-bottom:10px;
+}
+.menu-card h3{margin-bottom:6px}
+.menu-card p{opacity:.72;font-size:14px}
+@media(max-width:650px){
+ header{padding:12px 12px !important}
+ nav button,header nav a{padding:8px 11px !important;font-size:13px}
+ .site-hero{margin:16px 10px;padding:22px}
+ .menu-grid{margin:14px 10px}
+}
+
 </style>
 </head>
 
@@ -254,6 +348,33 @@ body.game-active footer { display: none !important; }
 <button onclick="showPage('settings')">⚙️ Ayarlar</button>
 </nav>
 </header>
+<section class="site-hero">
+  <h2>👑 KING LEAGUE 2026</h2>
+  <p>Futbol, yarış ve eğlence tek menüde. Bir oyun seç ve hemen başla.</p>
+</section>
+<div class="menu-grid">
+  <div class="menu-card">
+    <div class="icon">⚽</div>
+    <h3>Süper Lig</h3>
+    <p>11'e 11 maç, paslaşma ve pres sistemi.</p>
+  </div>
+  <div class="menu-card">
+    <div class="icon">🏎️</div>
+    <h3>Araba Yarışı</h3>
+    <p>Engellerden kaç ve en yüksek skoru yap.</p>
+  </div>
+  <div class="menu-card">
+    <div class="icon">🏁</div>
+    <h3>Hız Yarışı</h3>
+    <p>Hızını test et ve yarışa katıl.</p>
+  </div>
+  <div class="menu-card">
+    <div class="icon">📺</div>
+    <h3>Diziler</h3>
+    <p>Favori videolarını ve içerikleri keşfet.</p>
+  </div>
+</div>
+
 
 <section id="home" class="page active">
 <div class="hero">
@@ -488,7 +609,7 @@ let raceMaps = [
 ];
 
 /* 🏆 KING LEAGUE 2026 - 3D FUTBOL */
-let football3D={scene:null,camera:null,renderer:null,player:null,ball:null,players:[],opponents:[],teammates:[],field:null,selected:null,last:performance.now(),score:0,stamina:100,initialized:false};
+let football3D={scene:null,camera:null,renderer:null,player:null,ball:null,goalkeeper:null,opponentGoalkeeper:null,players:[],opponents:[],teammates:[],field:null,selected:null,last:performance.now(),score:0,stamina:100,initialized:false,passTarget:null,passCooldown:0,teamTargetTimer:0};
 let footballStep="team_select";
 let footballTeams=[
  {name:"Galatasaray",color1:0xA90429,color2:0xFDB913},
@@ -664,86 +785,694 @@ function closeGame() {
     const f3=document.getElementById("football3dContainer"); if(f3) f3.style.display="none";
 }
 
-/* 🏆 KING LEAGUE 2026 3D FUTBOL */
+/* 🏆 KING LEAGUE 2026 3D FUTBOL - KALECİ + KOŞU ANİMASYONLU */
 function buildFootballTeamButtons(){
  const grid=document.getElementById("footballTeamGrid"); if(!grid)return; grid.innerHTML="";
- footballTeams.forEach((t,i)=>{const b=document.createElement("button");b.className="football-team-btn";b.innerHTML=`<span style="background:#${t.color1.toString(16).padStart(6,'0')}"></span>${i+1}. ${t.name}`;b.onclick=()=>selectFootballTeam(i);grid.appendChild(b);});
+ footballTeams.forEach((t,i)=>{
+   const b=document.createElement("button");
+   b.className="football-team-btn";
+   b.innerHTML=`<span style="background:#${t.color1.toString(16).padStart(6,'0')}"></span>${i+1}. ${t.name}`;
+   b.onclick=()=>selectFootballTeam(i);
+   grid.appendChild(b);
+ });
 }
 function selectFootballTeam(i){
  football3D.selected=footballTeams[i]; footballStep="playing";
- document.getElementById("footballSelect").style.display="none"; document.getElementById("footballActions").style.display="flex";
+ document.getElementById("footballSelect").style.display="none";
+ document.getElementById("footballActions").style.display="flex";
  setupFootballMatch();
 }
 function footballKeyTeam(){
  const map={"1":0,"2":1,"3":2,"4":3,"5":4,"6":5,"7":6,"8":7,"9":8,"0":9};
  for(const k in map){if(keys[k]){keys[k]=false;selectFootballTeam(map[k]);return;}}
 }
+
+/* Oyuncu modeli: kollar/bacaklar ayrı tutuluyor, böylece koşu animasyonu yapılabiliyor. */
 function makeFootballPlayer(color1,color2){
  const g=new THREE.Group();
  const skin=new THREE.MeshStandardMaterial({color:0xf0b27a,roughness:.8});
  const shirt=new THREE.MeshStandardMaterial({color:color1,roughness:.7});
  const trim=new THREE.MeshStandardMaterial({color:color2,roughness:.7});
- const head=new THREE.Mesh(new THREE.SphereGeometry(.25,12,10),skin); head.position.y=1.75; g.add(head);
- const body=new THREE.Mesh(new THREE.CylinderGeometry(.32,.38,.72,10),shirt); body.position.y=1.25; g.add(body);
- const stripe=new THREE.Mesh(new THREE.BoxGeometry(.11,.7,.41),trim); stripe.position.set(0,1.25,.31); g.add(stripe);
- const l=new THREE.Mesh(new THREE.CylinderGeometry(.09,.11,.65,8),trim),r=l.clone();l.position.set(-.15,.72,0);r.position.set(.15,.72,0);g.add(l,r);
- const la=new THREE.Mesh(new THREE.CylinderGeometry(.07,.08,.65,8),skin),ra=la.clone();la.position.set(-.43,1.18,0);ra.position.set(.43,1.18,0);la.rotation.z=.35;ra.rotation.z=-.35;g.add(la,ra);
- const shoe=new THREE.MeshStandardMaterial({color:0xffffff});const sl=new THREE.Mesh(new THREE.BoxGeometry(.16,.10,.30),shoe),sr=sl.clone();sl.position.set(-.15,.35,.07);sr.position.set(.15,.35,.07);g.add(sl,sr);
- g.userData.speed=5; return g;
+ const shoe=new THREE.MeshStandardMaterial({color:0xffffff});
+
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.25,12,10),skin);
+ head.position.y=1.75; g.add(head);
+
+ const body=new THREE.Mesh(new THREE.CylinderGeometry(.32,.38,.72,10),shirt);
+ body.position.y=1.25; g.add(body);
+
+ const stripe=new THREE.Mesh(new THREE.BoxGeometry(.11,.7,.41),trim);
+ stripe.position.set(0,1.25,.31); g.add(stripe);
+
+ const leftLeg=new THREE.Group(), rightLeg=new THREE.Group();
+ const ll=new THREE.Mesh(new THREE.CylinderGeometry(.09,.11,.65,8),trim);
+ const rl=ll.clone();
+ ll.position.set(0,-.32,0); rl.position.set(0,-.32,0);
+ leftLeg.position.set(-.15,.72,0); rightLeg.position.set(.15,.72,0);
+ leftLeg.add(ll); rightLeg.add(rl);
+
+ const sl=new THREE.Mesh(new THREE.BoxGeometry(.16,.10,.30),shoe);
+ const sr=sl.clone();
+ sl.position.set(0,-.64,.07); sr.position.set(0,-.64,.07);
+ leftLeg.add(sl); rightLeg.add(sr);
+ g.add(leftLeg,rightLeg);
+
+ const leftArm=new THREE.Group(), rightArm=new THREE.Group();
+ const la=new THREE.Mesh(new THREE.CylinderGeometry(.07,.08,.65,8),skin);
+ const ra=la.clone();
+ la.position.set(0,-.32,0); ra.position.set(0,-.32,0);
+ leftArm.position.set(-.43,1.48,0); rightArm.position.set(.43,1.48,0);
+ leftArm.rotation.z=.18; rightArm.rotation.z=-.18;
+ leftArm.add(la); rightArm.add(ra); g.add(leftArm,rightArm);
+
+ g.userData={
+   speed:5,
+   leftLeg,rightLeg,leftArm,rightArm,
+   animTime:Math.random()*Math.PI*2,
+   moving:false,
+   isGoalkeeper:false
+ };
+ return g;
 }
+
+/* Kaleci: farklı forma + eldivenler + kale önünde yatay hareket. */
+function makeFootballGoalkeeper(color1,color2){
+ const g=makeFootballPlayer(color1,color2);
+ g.userData.isGoalkeeper=true;
+
+ const gloves=new THREE.MeshStandardMaterial({color:color2});
+ const gl=new THREE.Mesh(new THREE.SphereGeometry(.13,10,8),gloves);
+ const gr=gl.clone();
+ gl.position.set(-.58,1.18,.02); gr.position.set(.58,1.18,.02);
+ g.add(gl,gr);
+
+ g.scale.set(1.08,1.08,1.08);
+ return g;
+}
+
+function animateFootballPlayer(p,dt,moving){
+ if(!p || !p.userData) return;
+ const u=p.userData;
+ u.moving=moving;
+ if(moving){
+   u.animTime += dt*11;
+   const s=Math.sin(u.animTime);
+   const c=Math.cos(u.animTime);
+   u.leftLeg.rotation.x=s*.65;
+   u.rightLeg.rotation.x=-s*.65;
+   u.leftArm.rotation.x=-s*.42;
+   u.rightArm.rotation.x=s*.42;
+   p.position.y=.2+Math.abs(c)*.025;
+ }else{
+   u.leftLeg.rotation.x*=.82;
+   u.rightLeg.rotation.x*=.82;
+   u.leftArm.rotation.x*=.82;
+   u.rightArm.rotation.x*=.82;
+ }
+}
+
+
+function addFootballStadiumDetails(){
+ const scene=football3D.scene;
+ if(!scene || football3D.stadiumDetailsAdded)return;
+ football3D.stadiumDetailsAdded=true;
+
+ /* Saha kenarını kapatan tek parça duvar yerine gerçek saha çevresi */
+ const borderMat=new THREE.MeshStandardMaterial({color:0x222831,roughness:.9});
+ const grassMat=new THREE.MeshStandardMaterial({color:0x267a36,roughness:1});
+
+ /* Teknik alanlar */
+ for(const z of [-33.5,33.5]){
+   const curb=new THREE.Mesh(new THREE.BoxGeometry(96,.35,1.1),borderMat);
+   curb.position.set(0,.15,z);
+   scene.add(curb);
+ }
+
+ /* Kale arkası güvenlik alanı + reklam panoları */
+ for(const x of [-1,1]){
+   const bx=x*50.5;
+   const back=new THREE.Mesh(new THREE.BoxGeometry(1.0,3,72),borderMat);
+   back.position.set(bx,1.5,0);
+   scene.add(back);
+
+   for(let z=-30;z<=30;z+=6){
+     const ad=new THREE.Mesh(
+       new THREE.BoxGeometry(.12,1.25,5.2),
+       new THREE.MeshStandardMaterial({color:(z/6)%2===0?0xf2f2f2:0x1976d2})
+     );
+     ad.position.set(x*48.8,.75,z);
+     scene.add(ad);
+   }
+ }
+
+ /* Köşe bayrakları */
+ for(const x of [-1,1]){
+   for(const z of [-1,1]){
+     const pole=new THREE.Mesh(
+       new THREE.CylinderGeometry(.035,.035,2.1,8),
+       new THREE.MeshStandardMaterial({color:0xffffff})
+     );
+     pole.position.set(x*45.3,1.05,z*28.3);
+     scene.add(pole);
+     const flag=new THREE.Mesh(
+       new THREE.BoxGeometry(.7,.38,.04),
+       new THREE.MeshStandardMaterial({color:0xffd000})
+     );
+     flag.position.set(x*45.65,1.75,z*28.3);
+     scene.add(flag);
+   }
+ }
+
+ /* Daha düzenli tribün kenarı */
+ for(const side of [-1,1]){
+   const roof=new THREE.Mesh(
+     new THREE.BoxGeometry(100,1.0,11),
+     new THREE.MeshStandardMaterial({color:0x151922,roughness:.7})
+   );
+   roof.position.set(0,9.2,side*35);
+   scene.add(roof);
+
+   const railing=new THREE.Mesh(
+     new THREE.BoxGeometry(100,.7,.25),
+     new THREE.MeshStandardMaterial({color:0x8c8c8c})
+   );
+   railing.position.set(0,7.9,side*30.1);
+   scene.add(railing);
+ }
+}
+
 function initFootball3D(){
  if(typeof THREE==='undefined'){document.getElementById("gameInfo").textContent="3D motoru yüklenemedi.";return;}
  const box=document.getElementById("football3dContainer");
  if(!football3D.renderer){
-  football3D.scene=new THREE.Scene(); football3D.scene.background=new THREE.Color(0x86b7df); football3D.scene.fog=new THREE.Fog(0x86b7df,45,170);
+  football3D.scene=new THREE.Scene();
+  football3D.scene.background=new THREE.Color(0x86b7df);
+  football3D.scene.fog=new THREE.Fog(0x86b7df,45,170);
   football3D.camera=new THREE.PerspectiveCamera(60,box.clientWidth/box.clientHeight,.1,250);
-  football3D.renderer=new THREE.WebGLRenderer({antialias:true}); football3D.renderer.setPixelRatio(Math.min(devicePixelRatio||1,2)); football3D.renderer.setSize(box.clientWidth,box.clientHeight); football3D.renderer.shadowMap.enabled=true; box.appendChild(football3D.renderer.domElement);
-  football3D.scene.add(new THREE.HemisphereLight(0xffffff,0x31512f,1.6)); const sun=new THREE.DirectionalLight(0xffffff,1.3);sun.position.set(30,60,20);sun.castShadow=true;football3D.scene.add(sun);
-  const pitch=new THREE.Mesh(new THREE.BoxGeometry(92,.25,58),new THREE.MeshStandardMaterial({color:0x16833a,roughness:.9}));pitch.position.y=0;pitch.receiveShadow=true;football3D.scene.add(pitch);football3D.field=pitch;
+  football3D.renderer=new THREE.WebGLRenderer({antialias:true});
+  football3D.renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  football3D.renderer.setSize(box.clientWidth,box.clientHeight);
+  football3D.renderer.shadowMap.enabled=true;
+  box.appendChild(football3D.renderer.domElement);
+
+  football3D.scene.add(new THREE.HemisphereLight(0xffffff,0x31512f,1.6));
+  const sun=new THREE.DirectionalLight(0xffffff,1.3);
+  sun.position.set(30,60,20); sun.castShadow=true; football3D.scene.add(sun);
+
+  const pitch=new THREE.Mesh(
+    new THREE.BoxGeometry(92,.25,58),
+    new THREE.MeshStandardMaterial({color:0x16833a,roughness:.9})
+  );
+  pitch.position.y=0; pitch.receiveShadow=true; football3D.scene.add(pitch); football3D.field=pitch;
+
   const lineMat=new THREE.MeshBasicMaterial({color:0xffffff});
-  const center=new THREE.Mesh(new THREE.RingGeometry(7.8,8,.05,64),lineMat);center.rotation.x=-Math.PI/2;center.position.y=.14;football3D.scene.add(center);
-  for(const z of [-29,29]){const line=new THREE.Mesh(new THREE.BoxGeometry(92,.05,.18),lineMat);line.position.set(0,.16,z);football3D.scene.add(line);}
-  for(const x of [-46,46]){const line=new THREE.Mesh(new THREE.BoxGeometry(.18,.05,58),lineMat);line.position.set(x,.16,0);football3D.scene.add(line);}
-  // ceza alanları ve kale
-  for(const x of [-38,38]){const boxLine=new THREE.Mesh(new THREE.BoxGeometry(16,.05,24),new THREE.MeshBasicMaterial({color:0xffffff,wireframe:true}));boxLine.position.set(x,.16,0);football3D.scene.add(boxLine);const goal=new THREE.Mesh(new THREE.BoxGeometry(.35,4.5,12),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.5}));goal.position.set(x>0?46.4:-46.4,2.25,0);football3D.scene.add(goal);}
-  // tribünler + seyirciler
+  const center=new THREE.Mesh(new THREE.RingGeometry(7.8,8,.05,64),lineMat);
+  center.rotation.x=-Math.PI/2; center.position.y=.14; football3D.scene.add(center);
+
+  for(const z of [-29,29]){
+   const line=new THREE.Mesh(new THREE.BoxGeometry(92,.05,.18),lineMat);
+   line.position.set(0,.16,z); football3D.scene.add(line);
+  }
+  for(const x of [-46,46]){
+   const line=new THREE.Mesh(new THREE.BoxGeometry(.18,.05,58),lineMat);
+   line.position.set(x,.16,0); football3D.scene.add(line);
+  }
+
+  /* Ceza alanları + gerçek kale çerçevesi + ağ */
+  for(const x of [-38,38]){
+   const boxLine=new THREE.Mesh(
+     new THREE.BoxGeometry(16,.05,24),
+     new THREE.MeshBasicMaterial({color:0xffffff,wireframe:true})
+   );
+   boxLine.position.set(x,.16,0); football3D.scene.add(boxLine);
+
+   const gx=x>0?46.4:-46.4;
+   const postMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.5});
+   const post=new THREE.Mesh(new THREE.BoxGeometry(.35,4.5,.35),postMat);
+   const cross=new THREE.Mesh(new THREE.BoxGeometry(.35,.35,12),postMat);
+   post.position.set(gx,2.25,-6); football3D.scene.add(post);
+   const post2=post.clone(); post2.position.z=6; football3D.scene.add(post2);
+   cross.position.set(gx,4.5,0); football3D.scene.add(cross);
+
+   const netMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.22,wireframe:true});
+   const net=new THREE.Mesh(new THREE.BoxGeometry(4,4.2,12),netMat);
+   net.position.set(x>0?44.4:-44.4,2.1,0); football3D.scene.add(net);
+  }
+
+  /* Tribünler + seyirciler */
   const standMat=new THREE.MeshStandardMaterial({color:0x333844,roughness:.8});
-  for(const side of [-1,1]){const stand=new THREE.Mesh(new THREE.BoxGeometry(100,8,10),standMat);stand.position.set(0,4,side*35);football3D.scene.add(stand);for(let i=0;i<28;i++){const fan=makeFootballPlayer(0xeeeeee,0x222222);fan.scale.set(.7,.7,.7);fan.position.set(-45+i*3.3,8+(i%2)*.7,side*35);football3D.scene.add(fan);}}
-  const grassSide=new THREE.Mesh(new THREE.BoxGeometry(110,2,75),new THREE.MeshStandardMaterial({color:0x1c2430}));grassSide.position.y=-1.1;football3D.scene.add(grassSide);
+  for(const side of [-1,1]){
+   const stand=new THREE.Mesh(new THREE.BoxGeometry(100,8,10),standMat);
+   stand.position.set(0,4,side*35); football3D.scene.add(stand);
+   for(let i=0;i<28;i++){
+    const fan=makeFootballPlayer(0xeeeeee,0x222222);
+    fan.scale.set(.7,.7,.7);
+    fan.position.set(-45+i*3.3,8+(i%2)*.7,side*35);
+    football3D.scene.add(fan);
+   }
+  }
+  const grassSide=new THREE.Mesh(
+    new THREE.BoxGeometry(110,2,75),
+    new THREE.MeshStandardMaterial({color:0x1c2430})
+  );
+  grassSide.position.y=-1.1; football3D.scene.add(grassSide);
  }
  football3D.initialized=true; resizeFootball3D();
 }
+
 function setupFootballMatch(){
- football3D.players.forEach(p=>football3D.scene.remove(p));football3D.opponents.forEach(p=>football3D.scene.remove(p));football3D.teammates=[];football3D.opponents=[];football3D.players=[];
- const t=football3D.selected, opp=footballTeams[(footballTeams.indexOf(t)+1)%footballTeams.length];
- football3D.player=makeFootballPlayer(t.color1,t.color2);football3D.player.position.set(-8,.2,0);football3D.scene.add(football3D.player);
- for(let i=0;i<5;i++){const p=makeFootballPlayer(t.color1,t.color2);p.position.set(-18+i*5,0,(i%3-1)*9);football3D.scene.add(p);football3D.teammates.push(p);}
- for(let i=0;i<6;i++){const p=makeFootballPlayer(opp.color1,opp.color2);p.position.set(12+(i%3)*7,0,(i%4-1.5)*9);football3D.scene.add(p);football3D.opponents.push(p);}
- football3D.ball=new THREE.Mesh(new THREE.SphereGeometry(.32,16,12),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.4}));football3D.ball.position.set(-6,.45,0);football3D.scene.add(football3D.ball);
- football3D.score=0;document.getElementById("gameInfo").textContent=`${t.name} • Oklar hareket • 1 Şut • 2 Pas • 3 Orta • 4 Ara Pas`;
+ football3D.players.forEach(p=>football3D.scene.remove(p));
+ football3D.opponents.forEach(p=>football3D.scene.remove(p));
+ if(football3D.goalkeeper)football3D.scene.remove(football3D.goalkeeper);
+ if(football3D.opponentGoalkeeper)football3D.scene.remove(football3D.opponentGoalkeeper);
+
+ football3D.teammates=[]; football3D.opponents=[]; football3D.players=[];
+ const t=football3D.selected;
+ const opp=footballTeams[(footballTeams.indexOf(t)+1)%footballTeams.length];
+
+ football3D.player=makeFootballPlayer(t.color1,t.color2);
+ football3D.player.position.set(-8,.2,0);
+ football3D.scene.add(football3D.player);
+
+ /* 10 takım arkadaşı: oyuncular birbirinden uzak, çakışmayan diziliş */
+ const myFormation=[
+   [-31,0],[-22,-14],[-22,0],[-22,14],
+   [-10,-18],[-10,-6],[-10,8],[-10,20],
+   [2,-12],[2,12]
+ ];
+ myFormation.forEach(pos=>{
+   const p=makeFootballPlayer(t.color1,t.color2);
+   p.position.set(pos[0],.2,pos[1]);
+   football3D.scene.add(p);
+   football3D.teammates.push(p);
+ });
+
+ /* 10 rakip saha oyuncusu */
+ const oppFormation=[
+   [31,0],[22,-14],[22,0],[22,14],
+   [10,-18],[10,-6],[10,8],[10,20],
+   [-2,-12],[-2,12]
+ ];
+ oppFormation.forEach(pos=>{
+   const p=makeFootballPlayer(opp.color1,opp.color2);
+   p.position.set(pos[0],.2,pos[1]);
+   football3D.scene.add(p);
+   football3D.opponents.push(p);
+ });
+
+ football3D.opponentGoalkeeper=makeFootballGoalkeeper(opp.color1,opp.color2);
+ football3D.opponentGoalkeeper.position.set(43.0,.2,0);
+ football3D.scene.add(football3D.opponentGoalkeeper);
+
+ football3D.goalkeeper=makeFootballGoalkeeper(t.color1,t.color2);
+ football3D.goalkeeper.position.set(-43.0,.2,0);
+ football3D.scene.add(football3D.goalkeeper);
+
+ football3D.ball=new THREE.Mesh(
+   new THREE.SphereGeometry(.32,16,12),
+   new THREE.MeshStandardMaterial({color:0xffffff,roughness:.4})
+ );
+ football3D.ball.position.set(-6,.45,0);
+ football3D.scene.add(football3D.ball);
+
+ football3D.ball.userData.vel=new THREE.Vector3(0,0,0);
+ football3D.ball.userData.owner=football3D.player;
+ football3D.passTarget=null;
+ football3D.passCooldown=0;
+ football3D.teamTargetTimer=0;
+ football3D.score=0;
+ football3D.last=performance.now();
+
+ document.getElementById("gameInfo").textContent=
+   `${t.name} vs ${opp.name} • 11'e 11 • Paslaşmalı oyun • Oklar • 1 Şut • 2 Pas • 3 Orta • 4 Ara Pas`;
 }
+
 function footballMovePlayer(dt){
- if(!football3D.player)return;let x=0,z=0;if(keys.ArrowLeft)x-=1;if(keys.ArrowRight)x+=1;if(keys.ArrowUp)z-=1;if(keys.ArrowDown)z+=1;
- const len=Math.hypot(x,z)||1;if(x||z){x/=len;z/=len;football3D.player.position.x+=x*8*dt;football3D.player.position.z+=z*8*dt;football3D.player.rotation.y=Math.atan2(x,z);}
- football3D.player.position.x=Math.max(-43,Math.min(43,football3D.player.position.x));football3D.player.position.z=Math.max(-26,Math.min(26,football3D.player.position.z));
+ if(!football3D.player)return;
+ let x=0,z=0;
+ if(keys.ArrowLeft)x-=1;
+ if(keys.ArrowRight)x+=1;
+ if(keys.ArrowUp)z-=1;
+ if(keys.ArrowDown)z+=1;
+
+ const moving=!!(x||z);
+ const len=Math.hypot(x,z)||1;
+ if(moving){
+   x/=len; z/=len;
+   const nextX=football3D.player.position.x+x*8*dt;
+   const nextZ=football3D.player.position.z+z*8*dt;
+
+   /* Oyuncuların içinden geçme: diğer oyunculara yaklaşınca yavaşla/dur. */
+   let blocked=false;
+   const all=[...football3D.teammates,...football3D.opponents,football3D.goalkeeper,football3D.opponentGoalkeeper];
+   for(const other of all){
+     if(!other)continue;
+     const dx=nextX-other.position.x, dz=nextZ-other.position.z;
+     if(Math.hypot(dx,dz)<1.35){blocked=true;break;}
+   }
+   if(!blocked){
+     football3D.player.position.x=nextX;
+     football3D.player.position.z=nextZ;
+   }
+   football3D.player.rotation.y=Math.atan2(x,z);
+ }
+ football3D.player.position.x=Math.max(-40,Math.min(40,football3D.player.position.x));
+ football3D.player.position.z=Math.max(-26,Math.min(26,football3D.player.position.z));
+ animateFootballPlayer(football3D.player,dt,moving);
+ return moving;
 }
-function footballAction(a){if(!football3D.ball||!football3D.player)return;const p=football3D.player,b=football3D.ball;const dir=new THREE.Vector3(Math.sin(p.rotation.y),0,Math.cos(p.rotation.y));const near=b.position.distanceTo(p.position)<3.2;if(!near)return;
- if(a===1){b.position.copy(p.position).add(dir.clone().multiplyScalar(1.5));b.position.y=.5;b.userData.vel=dir.clone().multiplyScalar(18);football3D.score++;}
- if(a===2){let mate=football3D.teammates[0];let best=1e9;football3D.teammates.forEach(m=>{let d=m.position.distanceTo(p.position);if(d<best){best=d;mate=m;}});let v=mate.position.clone().sub(p.position).normalize();b.position.copy(p.position).add(v.multiplyScalar(1.4));b.position.y=.5;b.userData.vel=mate.position.clone().sub(b.position).normalize().multiplyScalar(13);}
- if(a===3){b.position.copy(p.position).add(dir.clone().multiplyScalar(1.4));b.position.y=.7;b.userData.vel=dir.clone().multiplyScalar(12);b.userData.vel.y=7;}
- if(a===4){b.position.copy(p.position).add(dir.clone().multiplyScalar(1.4));b.position.y=.5;b.userData.vel=dir.clone().multiplyScalar(15);}
+
+function footballKickBall(velocity){
+ const b=football3D.ball;
+ b.userData.owner=null;
+ b.position.y=Math.max(.45,b.position.y);
+ b.userData.vel=velocity.clone();
 }
+
+function footballPassTo(target,loft=false){
+ if(!target || !football3D.ball || football3D.passCooldown>0)return false;
+ const b=football3D.ball;
+ const from=b.position.clone();
+ const to=target.position.clone();
+ to.y=.45;
+ const v=to.sub(from);
+ const distance=Math.max(1,v.length());
+ v.normalize();
+ footballKickBall(v.multiplyScalar(Math.min(16,8+distance*.35)));
+ if(loft)b.userData.vel.y=5;
+ football3D.passTarget=target;
+ football3D.passCooldown=.25;
+ return true;
+}
+
+/* Top takım arkadaşına ulaşınca kontrol edilen oyuncu için topu yakalar. */
+function resolveFootballPass(dt){
+ if(football3D.passCooldown>0)football3D.passCooldown-=dt;
+ const b=football3D.ball;
+ if(!b)return;
+
+ if(b.userData.vel && b.userData.vel.length()>0.15){
+   const target=football3D.passTarget;
+   if(target && target.position.distanceTo(b.position)<1.5){
+     b.userData.vel.set(0,0,0);
+     b.userData.owner=target;
+     b.position.copy(target.position);
+     b.position.y=.45;
+     football3D.passTarget=null;
+   }
+ }
+}
+
+/* Takım arkadaşları pas bekler, rakipler de topa doğru ama birbirine çarpmadan hareket eder. */
+function keepPlayersSeparated(list,minDist=1.55){
+ for(let i=0;i<list.length;i++){
+   for(let j=i+1;j<list.length;j++){
+     const a=list[i],b=list[j];
+     const dx=b.position.x-a.position.x,dz=b.position.z-a.position.z;
+     const d=Math.hypot(dx,dz);
+     if(d>0 && d<minDist){
+       const push=(minDist-d)/2;
+       a.position.x-=dx/d*push; a.position.z-=dz/d*push;
+       b.position.x+=dx/d*push; b.position.z+=dz/d*push;
+     }
+   }
+ }
+}
+
+function updateFootballGoalkeepers(dt){
+ const ball=football3D.ball;
+ if(!ball)return;
+
+ const gks=[football3D.goalkeeper,football3D.opponentGoalkeeper];
+ for(const g of gks){
+   if(!g)continue;
+   const targetZ=Math.max(-5.0,Math.min(5.0,ball.position.z));
+   const dz=targetZ-g.position.z;
+   g.position.z+=Math.sign(dz)*Math.min(Math.abs(dz),5.5*dt);
+   const moving=Math.abs(dz)>.05;
+   animateFootballPlayer(g,dt,moving);
+   g.rotation.y=g===football3D.goalkeeper?Math.PI/2:-Math.PI/2;
+ }
+
+ /* Şut kaleye gidiyorsa kaleci topa doğru hamle yapar */
+ if(ball.userData.vel){
+   if(ball.userData.vel.x>4 && football3D.opponentGoalkeeper){
+     const g=football3D.opponentGoalkeeper;
+     if(Math.abs(ball.position.x-g.position.x)<12) g.position.z+=(ball.position.z-g.position.z)*dt*3;
+   }
+   if(ball.userData.vel.x<-4 && football3D.goalkeeper){
+     const g=football3D.goalkeeper;
+     if(Math.abs(ball.position.x-g.position.x)<12) g.position.z+=(ball.position.z-g.position.z)*dt*3;
+   }
+ }
+}
+
+function footballAction(a){
+ if(!football3D.ball||!football3D.player)return;
+ const p=football3D.player,b=football3D.ball;
+ const dir=new THREE.Vector3(Math.sin(p.rotation.y),0,Math.cos(p.rotation.y));
+ const near=b.userData.owner===p || b.position.distanceTo(p.position)<3.2;
+ if(!near)return;
+
+ if(a===1){
+   b.userData.owner=null;
+   b.position.copy(p.position).add(dir.clone().multiplyScalar(1.5));
+   b.position.y=.5;
+   footballKickBall(dir.clone().multiplyScalar(18));
+   football3D.score++;
+ }
+
+ if(a===2){
+   /* En uygun takım arkadaşını seç: yakın + ileride olan */
+   let best=null,bestScore=-Infinity;
+   football3D.teammates.forEach(m=>{
+     const to=m.position.clone().sub(p.position);
+     const d=to.length();
+     if(d<2.5 || d>28)return;
+     const forward=to.normalize().dot(dir);
+     const score=forward*2-d*.035;
+     if(score>bestScore){bestScore=score;best=m;}
+   });
+   if(best)footballPassTo(best,false);
+ }
+
+ if(a===3){
+   b.userData.owner=null;
+   b.position.copy(p.position).add(dir.clone().multiplyScalar(1.4));
+   b.position.y=.7;
+   footballKickBall(dir.clone().multiplyScalar(12));
+   b.userData.vel.y=7;
+ }
+
+ if(a===4){
+   /* Ara pası en ileri uygun oyuncuya gönder */
+   let best=null,bestScore=-Infinity;
+   football3D.teammates.forEach(m=>{
+     const to=m.position.clone().sub(p.position);
+     const d=to.length();
+     if(d<4 || d>30)return;
+     const forward=to.normalize().dot(dir);
+     const score=forward*3-d*.025;
+     if(score>bestScore){bestScore=score;best=m;}
+   });
+   if(best)footballPassTo(best,true);
+ }
+}
+
+
+function footballTryStealBall(player){
+ const b=football3D.ball;
+ if(!b || b.userData.owner!==football3D.player)return false;
+ const d=player.position.distanceTo(football3D.player.position);
+ if(d<1.65){
+   b.userData.owner=player;
+   b.userData.vel.set(0,0,0);
+   b.position.copy(player.position);
+   b.position.y=.45;
+   return true;
+ }
+ return false;
+}
+
+function footballNearestPlayerPressing(list, target){
+ let nearest=null, dist=Infinity;
+ for(const p of list){
+   const d=p.position.distanceTo(target.position);
+   if(d<dist){dist=d;nearest=p;}
+ }
+ return {player:nearest,distance:dist};
+}
+
 function updateFootball3D(){
- if(footballStep==='team_select'){footballKeyTeam();return;} if(!football3D.player)return;const now=performance.now(),dt=Math.min((now-football3D.last)/1000,.05);football3D.last=now;
+ if(footballStep==='team_select'){footballKeyTeam();return;}
+ if(!football3D.player)return;
+
+ const now=performance.now();
+ const dt=Math.min((now-football3D.last)/1000,.05);
+ football3D.last=now;
+
  footballMovePlayer(dt);
- for(const o of football3D.opponents){const to=football3D.ball.position.clone().sub(o.position);to.y=0;if(to.length()>2){to.normalize();o.position.add(to.multiplyScalar(2.2*dt));o.rotation.y=Math.atan2(to.x,to.z);}}
- if(football3D.ball.userData.vel){football3D.ball.position.add(football3D.ball.userData.vel.clone().multiplyScalar(dt));football3D.ball.userData.vel.multiplyScalar(Math.pow(.03,dt));football3D.ball.position.y=Math.max(.35,football3D.ball.position.y+((football3D.ball.userData.vel.y||0)*dt));if(football3D.ball.position.y<=.36)football3D.ball.userData.vel.y=0;}
- if(football3D.ball.position.x>44||football3D.ball.position.x<-44||Math.abs(football3D.ball.position.z)>28){football3D.ball.position.x=Math.max(-43,Math.min(43,football3D.ball.position.x));football3D.ball.position.z=Math.max(-27,Math.min(27,football3D.ball.position.z));football3D.ball.userData.vel.set(0,0,0);}
- const p=football3D.player.position;football3D.camera.position.lerp(new THREE.Vector3(p.x,10,p.z+14),.1);football3D.camera.lookAt(p.x,0,p.z);
- const act=["","1 ŞUT","2 PAS","3 ORTA","4 ARA PAS"];for(let i=1;i<=4;i++)if(keys[String(i)]){keys[String(i)]=false;footballAction(i);}document.getElementById("gameInfo").textContent=`${football3D.selected.name} • Top: ${football3D.score} aksiyon • ${act[1]} | ${act[2]} | ${act[3]} | ${act[4]}`;
+
+ const ball=football3D.ball;
+ if(!ball)return;
+
+ /* Top kimin ayağındaysa onunla birlikte hareket eder. */
+ if(ball.userData.owner){
+   const owner=ball.userData.owner;
+   const dir=new THREE.Vector3(
+     Math.sin(owner.rotation.y),0,Math.cos(owner.rotation.y)
+   );
+   ball.position.copy(owner.position).add(dir.multiplyScalar(1.15));
+   ball.position.y=.45;
+ }else{
+   if(ball.userData.vel){
+     ball.position.add(ball.userData.vel.clone().multiplyScalar(dt));
+     ball.userData.vel.multiplyScalar(Math.pow(.08,dt));
+     ball.position.y=Math.max(.35,
+       ball.position.y+((ball.userData.vel.y||0)*dt)
+     );
+     if(ball.position.y<=.36){
+       ball.position.y=.36;
+       ball.userData.vel.y=0;
+     }
+   }
+ }
+
+ /* TOP BOŞSA: hem bizim hem rakibin en yakındaki oyuncusu topa baskı yapar. */
+ if(!ball.userData.owner){
+   let nearestMate=footballNearestPlayerPressing(football3D.teammates,{position:ball.position}).player;
+   let nearestOpp=footballNearestPlayerPressing(football3D.opponents,{position:ball.position}).player;
+
+   for(const p of football3D.teammates){
+     const active=p===nearestMate;
+     if(active){
+       const to=ball.position.clone().sub(p.position);to.y=0;
+       const d=to.length();
+       if(d>1.05){
+         to.normalize();
+         p.position.x+=to.x*2.1*dt;
+         p.position.z+=to.z*2.1*dt;
+         p.rotation.y=Math.atan2(to.x,to.z);
+       }
+       animateFootballPlayer(p,dt,d>1.05);
+       if(d<=1.15){
+         ball.userData.owner=p;
+         ball.userData.vel.set(0,0,0);
+         ball.position.copy(p.position);
+         ball.position.y=.45;
+       }
+     }else{
+       animateFootballPlayer(p,dt,false);
+     }
+   }
+
+   for(const o of football3D.opponents){
+     const active=o===nearestOpp;
+     if(active){
+       const to=ball.position.clone().sub(o.position);to.y=0;
+       const d=to.length();
+       if(d>1.05){
+         to.normalize();
+         o.position.x+=to.x*2.2*dt;
+         o.position.z+=to.z*2.2*dt;
+         o.rotation.y=Math.atan2(to.x,to.z);
+       }
+       animateFootballPlayer(o,dt,d>1.05);
+     }else{
+       animateFootballPlayer(o,dt,false);
+     }
+   }
+ }
+
+ /* RAKİP TOPU SÜRÜYORSA: yakındaki kendi oyuncumuz pres yapıp topu alabilir. */
+ const owner=ball.userData.owner;
+ if(owner && football3D.opponents.includes(owner)){
+   const press=footballNearestPlayerPressing(football3D.teammates,owner);
+   const p=press.player;
+   if(p){
+     const to=owner.position.clone().sub(p.position);to.y=0;
+     const d=to.length();
+     if(d>1.05){
+       to.normalize();
+       p.position.x+=to.x*2.5*dt;
+       p.position.z+=to.z*2.5*dt;
+       p.rotation.y=Math.atan2(to.x,to.z);
+     }
+     animateFootballPlayer(p,dt,d>1.05);
+
+     /* Yaklaşınca rakibin ayağındaki topu kap. */
+     if(d<=1.25){
+       ball.userData.owner=p;
+       ball.userData.vel.set(0,0,0);
+       ball.position.copy(p.position);
+       ball.position.y=.45;
+     }
+   }
+ }
+
+ /* BİZ TOPU SÜRÜYORSAK: yakındaki takım arkadaşları destek verir,
+    rakiplerden yalnızca en yakındaki oyuncu pres yapar. */
+ if(ball.userData.owner===football3D.player){
+   for(const p of football3D.teammates){
+     const to=p.position.clone().sub(football3D.player.position);to.y=0;
+     animateFootballPlayer(p,dt,false);
+   }
+
+   const press=footballNearestPlayerPressing(football3D.opponents,football3D.player);
+   const o=press.player;
+   if(o){
+     const to=football3D.player.position.clone().sub(o.position);to.y=0;
+     const d=to.length();
+     if(d>1.25){
+       to.normalize();
+       o.position.x+=to.x*2.25*dt;
+       o.position.z+=to.z*2.25*dt;
+       o.rotation.y=Math.atan2(to.x,to.z);
+     }
+     animateFootballPlayer(o,dt,d>1.25);
+   }
+ }
+
+ keepPlayersSeparated(football3D.teammates);
+ keepPlayersSeparated(football3D.opponents);
+ updateFootballGoalkeepers(dt);
+ resolveFootballPass(dt);
+
+ if(ball.position.x>44||ball.position.x<-44||Math.abs(ball.position.z)>28){
+   ball.position.x=Math.max(-43,Math.min(43,ball.position.x));
+   ball.position.z=Math.max(-27,Math.min(27,ball.position.z));
+   ball.userData.vel.set(0,0,0);
+   ball.userData.owner=null;
+ }
+
+ const p=football3D.player.position;
+ football3D.camera.position.lerp(
+   new THREE.Vector3(p.x,10,p.z+14),.1
+ );
+ football3D.camera.lookAt(p.x,0,p.z);
+
+ for(let i=1;i<=4;i++){
+   if(keys[String(i)]){
+     keys[String(i)]=false;
+     footballAction(i);
+   }
+ }
+
+ document.getElementById("gameInfo").textContent=
+   `${football3D.selected.name} • 11'e 11 • PRES AKTİF • 1 ŞUT | 2 PAS | 3 ORTA | 4 ARA PAS`;
 }
-function drawFootball3D(){if(football3D.renderer)football3D.renderer.render(football3D.scene,football3D.camera);}
-function resizeFootball3D(){if(!football3D.renderer)return;const box=document.getElementById("football3dContainer"),w=box.clientWidth||900,h=box.clientHeight||500;football3D.camera.aspect=w/h;football3D.camera.updateProjectionMatrix();football3D.renderer.setSize(w,h);}
+
+function drawFootball3D(){
+ if(football3D.renderer)football3D.renderer.render(football3D.scene,football3D.camera);
+}
+function resizeFootball3D(){
+ if(!football3D.renderer)return;
+ const box=document.getElementById("football3dContainer");
+ const w=box.clientWidth||900,h=box.clientHeight||500;
+ football3D.camera.aspect=w/h;
+ football3D.camera.updateProjectionMatrix();
+ football3D.renderer.setSize(w,h);
+}
 window.addEventListener('resize',resizeFootball3D);
 
 /* 🏁 GELİŞMİŞ HIZ YARIŞI (TRAFİK) MANTIĞI */
