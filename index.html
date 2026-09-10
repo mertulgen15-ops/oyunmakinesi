@@ -332,6 +332,61 @@ nav button.active, header nav a.active{
  .menu-grid{margin:14px 10px}
 }
 
+
+/* ===== MODERN ARCADE THEME / CLEANUP ===== */
+:root{
+  --bg-color:#070b14;
+  --card-bg:#101827;
+  --text-color:#f5f7ff;
+  --btn-bg:#19b5fe;
+  --btn-text:#06101d;
+  --accent:#19b5fe;
+  --accent-2:#7c4dff;
+  --muted:#9aa8bd;
+  --font-family:Inter,Segoe UI,Arial,sans-serif;
+}
+html{scroll-behavior:smooth;background:#070b14}
+body{
+  background:
+    radial-gradient(circle at 15% 10%,rgba(25,181,254,.14),transparent 28%),
+    radial-gradient(circle at 85% 20%,rgba(124,77,255,.12),transparent 30%),
+    linear-gradient(135deg,#050810 0%,#0a1020 48%,#071522 100%);
+  color:var(--text-color); overflow-x:hidden;
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:32px 32px;mask-image:linear-gradient(to bottom,black,transparent 85%)}
+header{
+  min-height:76px;height:auto!important;padding:14px 22px!important;
+  background:rgba(6,12,24,.82)!important;border-bottom:1px solid rgba(25,181,254,.35)!important;
+  box-shadow:0 12px 35px rgba(0,0,0,.35)!important;backdrop-filter:blur(16px);gap:16px;
+}
+.logo{font-size:24px!important;color:#fff;text-shadow:0 0 20px rgba(25,181,254,.45)}
+nav{display:flex!important;align-items:center;justify-content:flex-end;gap:8px!important;flex-wrap:wrap}
+nav button,header nav a{
+  margin:0!important;padding:10px 13px!important;border:1px solid rgba(255,255,255,.12)!important;
+  border-radius:12px!important;background:rgba(255,255,255,.055)!important;color:#eef6ff!important;
+  font-size:14px!important;transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease!important;
+}
+nav button:hover,header nav a:hover{transform:translateY(-2px);background:rgba(25,181,254,.14)!important;border-color:rgba(25,181,254,.65)!important;box-shadow:0 8px 22px rgba(25,181,254,.14)!important}
+.site-hero{margin:30px auto 18px!important;padding:42px!important;border:1px solid rgba(25,181,254,.24)!important;background:linear-gradient(135deg,rgba(10,22,40,.94),rgba(16,24,48,.88))!important;box-shadow:0 22px 55px rgba(0,0,0,.3)!important;position:relative;overflow:hidden}
+.site-hero::after{content:"";position:absolute;width:280px;height:280px;right:-100px;top:-150px;border-radius:50%;background:rgba(25,181,254,.16);filter:blur(10px)}
+.site-hero h2{position:relative;z-index:1;text-shadow:0 0 25px rgba(25,181,254,.25)}
+.site-hero p{color:#b9c7d9!important}
+.menu-card,.card{background:linear-gradient(145deg,rgba(16,24,39,.92),rgba(9,15,27,.92))!important;border:1px solid rgba(255,255,255,.09)!important;box-shadow:0 14px 35px rgba(0,0,0,.22)!important}
+.menu-card:hover,.card:hover{border-color:rgba(25,181,254,.42)!important;box-shadow:0 18px 42px rgba(0,0,0,.3),0 0 24px rgba(25,181,254,.06)!important}
+.play-button,.back-button,.theme-btn,.setting-btn,.chat-input-group button{background:linear-gradient(135deg,#19b5fe,#6c63ff)!important;color:#fff!important;border:0!important;box-shadow:0 8px 20px rgba(25,181,254,.18);transition:transform .18s ease,filter .18s ease,box-shadow .18s ease!important}
+.play-button:hover,.back-button:hover,.theme-btn:hover,.setting-btn:hover,.chat-input-group button:hover{transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 11px 25px rgba(25,181,254,.25)}
+.hero h1{font-size:clamp(42px,7vw,72px)!important;text-shadow:0 0 35px rgba(25,181,254,.2)}
+.page{max-width:1180px!important}
+.chat-container{background:rgba(8,14,25,.78)!important;border:1px solid rgba(255,255,255,.08)}
+.chat-box{background:rgba(0,0,0,.28)!important;border:1px solid rgba(255,255,255,.06)}
+.chat-message{background:rgba(255,255,255,.055)!important;border:1px solid rgba(255,255,255,.05)}
+.chat-input-group input{background:#0b1321!important;color:#fff!important;border:1px solid rgba(255,255,255,.1)!important}
+footer{background:rgba(5,10,18,.9)!important;border-top:1px solid rgba(25,181,254,.18);color:#9eabc0}
+.theme-options,.font-options{gap:9px!important}
+#gameArea{background:#080e1a!important;border-color:rgba(25,181,254,.25)!important}
+@media(max-width:850px){header{align-items:flex-start;flex-direction:column}.logo{width:100%;text-align:center}nav{width:100%;justify-content:center}.site-hero{margin:16px 10px!important;padding:28px 20px!important}}
+@media(max-width:520px){nav button,header nav a{font-size:12px!important;padding:8px 9px!important}.menu-grid{margin:12px 10px!important}.page{padding-left:12px!important;padding-right:12px!important}.card{padding:22px 14px!important}}
+
 </style>
 </head>
 
@@ -513,18 +568,27 @@ if (typeof THREE === "undefined") {
 </script>
 <script>
 function showPage(page) {
-    document.querySelectorAll(".page").forEach(function(item) { item.classList.remove("active"); });
-    document.getElementById(page).classList.add("active");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const target = document.getElementById(page);
+    if (!target) return;
+    document.querySelectorAll('.page').forEach(item => item.classList.remove('active'));
+    target.classList.add('active');
+    document.querySelectorAll('header nav button').forEach(btn => {
+        const match = btn.getAttribute('onclick')?.match(/showPage\('([^']+)'\)/);
+        btn.classList.toggle('active', !!match && match[1] === page);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function setTheme(theme) {
-    document.body.className = '';
-    if (theme !== 'mavi') { document.body.classList.add('theme-' + theme); }
+    // Oyundayken game-active sınıfını yanlışlıkla silme.
+    document.body.classList.remove('theme-siyah','theme-beyaz','theme-kirmizi','theme-yesil','theme-mor','theme-turuncu','theme-sari','theme-turkuaz','theme-pembe');
+    if (theme !== 'mavi') document.body.classList.add('theme-' + theme);
+    try { localStorage.setItem('gameAtariTheme', theme); } catch(e) {}
 }
 
 function setFont(fontName) {
     document.documentElement.style.setProperty('--font-family', fontName);
+    try { localStorage.setItem('gameAtariFont', fontName); } catch(e) {}
 }
 
 function sendMessage() {
@@ -534,11 +598,21 @@ function sendMessage() {
     const chatBox = document.getElementById("chatBox");
     const msgDiv = document.createElement("div");
     msgDiv.className = "chat-message";
-    msgDiv.innerHTML = "<b>Sen:</b> " + messageText;
+    const label = document.createElement('b');
+    label.textContent = 'Sen: ';
+    msgDiv.appendChild(label);
+    msgDiv.appendChild(document.createTextNode(messageText));
     chatBox.appendChild(msgDiv);
     input.value = "";
     chatBox.scrollTop = chatBox.scrollHeight;
 }
+
+try {
+    const savedTheme = localStorage.getItem('gameAtariTheme');
+    if (savedTheme) setTheme(savedTheme);
+    const savedFont = localStorage.getItem('gameAtariFont');
+    if (savedFont) setFont(savedFont);
+} catch(e) {}
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -571,6 +645,7 @@ window.addEventListener("keyup", function(e) {
 });
 window.addEventListener("blur", function() { keys = {}; });
 document.addEventListener("touchcancel", function() { keys = {}; });
+document.addEventListener("pointerup", function() { Object.keys(keys).forEach(k => keys[k] = false); });
 
 function handleTouch(keyName, isPressed) {
     keys[keyName] = isPressed;
@@ -1501,7 +1576,7 @@ function updateRace() {
         }
         for (let i = raceObstacles.length - 1; i >= 0; i--) {
             raceObstacles[i].y += raceSpeed;
-            if (raceObstacles[i].y > 400) { raceObstacles.splice(i, 1); raceScore += 25; }
+            if (raceObstacles[i].y > 400) { raceObstacles.splice(i, 1); raceScore += 25; continue; }
             // Çarpışma kontrolü
             let h = raceObstacles[i].type === 'truck' ? 100 : 70;
             if (raceObstacles[i].y > 230 && raceObstacles[i].y < 350 && Math.abs(raceX - raceObstacles[i].x) < 35) {
@@ -2346,7 +2421,16 @@ function initVice3D() {
 function resizeVice3D(){if(!vice3D.renderer)return;const box=document.getElementById('vice3dContainer'),w=box.clientWidth||900,h=box.clientHeight||500;vice3D.camera.aspect=w/h;vice3D.camera.updateProjectionMatrix();vice3D.renderer.setSize(w,h);}
 function viceBlocked(pos,r=.9){for(const b of vice3D.buildings){if(Math.abs(pos.x-b.position.x)<b.userData.halfX+r&&Math.abs(pos.z-b.position.z)<b.userData.halfZ+r)return true;}return false;}
 function viceMove(obj,dx,dz,r){const nx=obj.position.clone();nx.x+=dx;if(!viceBlocked(nx,r))obj.position.x=nx.x;const nz=obj.position.clone();nz.z+=dz;if(!viceBlocked(nz,r))obj.position.z=nz.z;obj.position.x=Math.max(-148,Math.min(148,obj.position.x));obj.position.z=Math.max(-148,Math.min(148,obj.position.z));}
-function viceNearestCar(){let best=null,bd=4.8;for(const c of vice3D.cars){const d=c.position.distanceTo(vice3D.player.position);if(c.userData.drivable&&d<bd){best=c;bd=d;}}return best;}
+function viceNearestCar(){
+    let best=null,bd=4.8;
+    const candidates = vice3D.cars.slice();
+    if(vice3D.player && vice3D.player.userData.drivable && vice3D.mode==='walk') candidates.push(vice3D.player);
+    for(const c of candidates){
+        const d=c.position.distanceTo(vice3D.walker ? vice3D.walker.position : vice3D.player.position);
+        if(c.userData.drivable&&d<bd){best=c;bd=d;}
+    }
+    return best;
+}
 function viceEnterCar(){
     const c=viceNearestCar();if(!c)return;
     vice3D.mode="car";vice3D.currentCar=c;c.userData.npcDriving=false;
@@ -2385,7 +2469,7 @@ function viceSetWeapon(on){
     }
     vice3D.weapon.visible=vice3D.weaponEquipped && vice3D.mode==="walk";
 }
-function viceShoot(){
+function viceShoot(dt){
     if(vice3D.mode!=="walk"||!vice3D.walker||!vice3D.weaponEquipped||vice3D.fireCooldown>0)return;
     vice3D.fireCooldown=.28;
     const origin=vice3D.walker.position.clone(); origin.y+=1.05;
@@ -2454,7 +2538,7 @@ function updateVice3D(){
         if(vice3D.mode==="walk")viceSetWeapon(!vice3D.weaponEquipped);
     }
     if(!keys["2"])vice3D.weaponLatch=false;
-    if(keys[" "]||keys["Space"])viceShoot();
+    if(keys[" "]||keys["Space"])viceShoot(dt);
     vice3D.fireCooldown=Math.max(0,vice3D.fireCooldown-dt);
     if(!keys["3"]&&!keys["4"]&&!keys["KeyE"]&&!keys["e"])vice3D.eLatch=false;
     // PC'de E de çalışmaya devam etsin.
