@@ -387,6 +387,160 @@ footer{background:rgba(5,10,18,.9)!important;border-top:1px solid rgba(25,181,25
 @media(max-width:850px){header{align-items:flex-start;flex-direction:column}.logo{width:100%;text-align:center}nav{width:100%;justify-content:center}.site-hero{margin:16px 10px!important;padding:28px 20px!important}}
 @media(max-width:520px){nav button,header nav a{font-size:12px!important;padding:8px 9px!important}.menu-grid{margin:12px 10px!important}.page{padding-left:12px!important;padding-right:12px!important}.card{padding:22px 14px!important}}
 
+
+
+/* ===== GAME ATARI NEON MOR-MAVI MAGAZA TEMASI (SADECE TASARIM) ===== */
+:root{--bg-color:#070713;--card-bg:#111126;--text-color:#f7f4ff;--btn-bg:#8b2cff;--btn-text:#fff;--accent:#a855ff;--accent-blue:#18c8ff;--font-family:Inter,Segoe UI,Arial,sans-serif}
+html{background:#070713;scroll-behavior:smooth}
+body{color:#f7f4ff!important;background:radial-gradient(ellipse at 10% 0%,#301052 0%,transparent 35%),radial-gradient(ellipse at 95% 20%,#071d4b 0%,transparent 35%),linear-gradient(135deg,#070713,#0b1024 60%,#10091c)!important;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:linear-gradient(#ffffff06 1px,transparent 1px),linear-gradient(90deg,#ffffff06 1px,transparent 1px);background-size:32px 32px}
+header{background:rgba(8,7,23,.94)!important;border-bottom:2px solid #852cff!important;box-shadow:0 4px 25px #7722ff66!important;backdrop-filter:blur(16px)}
+.logo{color:#fff!important;font-weight:900!important;text-shadow:0 0 12px #a855ff,0 0 28px #762dff!important}
+nav button,header nav a{color:#f8f3ff!important;background:linear-gradient(135deg,#17132e,#111a35)!important;border:1px solid #7540c9!important;border-radius:12px!important;transition:transform .2s,box-shadow .2s,background .2s!important}
+nav button:hover,header nav a:hover,nav button.active,header nav a.active{background:linear-gradient(135deg,#8b2cff,#4424c9)!important;border-color:#d7a8ff!important;box-shadow:0 0 18px #8b2cff88!important;transform:translateY(-2px)}
+.site-hero{position:relative;isolation:isolate;overflow:hidden;margin:28px auto 22px!important;padding:clamp(28px,5vw,54px)!important;border:1px solid #8c42ff!important;border-radius:22px!important;background:linear-gradient(90deg,rgba(9,7,25,.96),rgba(28,9,64,.76)),url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=85') center/cover!important;box-shadow:0 0 28px #7525ff35,inset 0 0 35px #6826ff20!important}
+.site-hero h2,.hero h1{color:#fff!important;text-shadow:0 0 12px #a855ff,0 0 32px #672aff!important;font-weight:900}
+.site-hero p{color:#d8d2f5!important}
+.menu-card{color:#fff!important;background:linear-gradient(145deg,#17142e,#0b1021)!important;border:1px solid #39305f!important;border-radius:18px!important;box-shadow:0 8px 25px #0008!important}
+.menu-card:hover{border-color:#a855ff!important;box-shadow:0 0 24px #862cff44!important;transform:translateY(-4px)}
+.menu-card .icon{filter:drop-shadow(0 0 8px #a855ff)}
+.page-title{color:#fff;text-shadow:0 0 12px #8b2cff88}
+/* Oyun kartları: uzun afiş kartı görünümü; onclick ve oyun fonksiyonları değişmez */
+#games .cards{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))!important;gap:20px!important}
+#games .card{position:relative;isolation:isolate;overflow:hidden;min-width:0;min-height:340px;padding:0 0 18px!important;display:flex;flex-direction:column;justify-content:flex-end;text-align:left!important;border:1px solid #6434a0!important;border-radius:16px!important;background-color:#111126!important;background-size:cover!important;background-position:center!important;box-shadow:0 8px 25px #0008!important;transition:transform .25s,border-color .25s,box-shadow .25s!important}
+#games .card:nth-child(1){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(2){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(3){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(4){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(5){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(6){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(7){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(8){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(9){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(10){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1534258936925-c58bed479fcb?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(11){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(12){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1474302770737-173ee21bab63?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:nth-child(13){background-image:linear-gradient(0deg,#090713 3%,#090713e8 35%,transparent 100%),url('https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=700&q=85')!important}
+#games .card:hover{transform:translateY(-5px);border-color:#c17aff!important;box-shadow:0 0 24px #8b2cff55!important}
+#games .card-icon{margin:auto 0 12px;padding:18px 16px 0;font-size:42px;filter:drop-shadow(0 2px 8px #000)}
+#games .card h3,#games .card p{margin-left:16px;margin-right:16px;color:#fff!important;text-shadow:0 2px 8px #000}
+#games .card h3{font-size:18px;line-height:1.3}
+#games .card p{color:#d8d4ed!important;font-size:13px;line-height:1.5}
+.play-button,.back-button,.theme-btn,.setting-btn,.chat-input-group button{color:#fff!important;background:linear-gradient(110deg,#922cff,#5b35e8)!important;border:1px solid #bd83ff!important;border-radius:12px!important;box-shadow:0 0 14px #842cff40!important}
+#games .play-button{width:calc(100% - 32px);margin:8px 16px 0!important;margin-top:auto!important}
+.play-button:hover,.back-button:hover,.theme-btn:hover,.setting-btn:hover{filter:brightness(1.2);box-shadow:0 0 22px #9b45ff88!important}
+#series .card,#photos .card,#chat .chat-container,#settings .card{background:linear-gradient(145deg,#17142e,#0b1021)!important;color:#f7f4ff!important;border:1px solid #40305f!important;border-radius:18px!important}
+.chat-box{background:#090b19!important}.chat-message{background:#201638!important;color:#fff!important}.chat-input-group input{background:#0b1021!important;color:#fff!important}
+footer{background:#080713!important;color:#aaa5c6!important;border-top:1px solid #6725ad}
+/* Oyun içi ekranların işleyişi ve kontrol tuşları korunur */
+body.game-active #gameArea{background:#080e1a!important}
+@media(max-width:850px){.site-hero{margin:16px 10px!important;padding:28px 20px!important}}
+@media(max-width:600px){#games .cards{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}#games .card{min-height:290px}.site-hero{margin:16px 10px!important;padding:28px 18px!important}}
+
+
+
+/* ===== GAME ATARI: SCREENSHOT-STYLE NEON STORE THEME ===== */
+:root {
+  --bg-color: #070711;
+  --card-bg: #0d0b1b;
+  --text-color: #f7f1ff;
+  --btn-bg: #8b20ed;
+  --btn-text: #fff;
+}
+html { background:#070711; scroll-behavior:smooth; }
+body {
+  min-height:100vh;
+  color:#f8f4ff !important;
+  background:radial-gradient(ellipse at 50% 0%,#190d32 0%,#080712 50%,#05050d 100%) !important;
+}
+header {
+  height:102px !important;
+  position:sticky; top:0; z-index:1000;
+  display:flex !important; flex-direction:column !important;
+  justify-content:center !important; align-items:center !important;
+  gap:12px !important; padding:8px 18px 10px !important;
+  background:rgba(7,6,17,.97) !important;
+  border-bottom:2px solid #c300ff !important;
+  box-shadow:0 4px 24px #a000ff26 !important;
+  backdrop-filter:blur(12px);
+}
+.logo {
+  color:#fff !important; font-size:29px !important; line-height:1.05;
+  font-weight:1000 !important; letter-spacing:1.5px !important;
+  text-shadow:0 0 8px #b54dff,0 0 22px #8b20ed !important;
+}
+header nav {display:flex;justify-content:center;align-items:center;gap:5px;flex-wrap:wrap;}
+header nav button {
+  margin:0 !important; padding:10px 14px !important;
+  color:#f5edff !important; font-size:12px !important;
+  background:#171126 !important; border:1px solid #241638 !important;
+  border-radius:9px !important; cursor:pointer;
+}
+header nav button:hover,header nav button.active {
+  background:linear-gradient(120deg,#7e20dc,#b500d9) !important;
+  border-color:#dc76ff !important; box-shadow:0 0 14px #a000ff55;
+}
+.site-hero {
+  display:block !important; position:relative; overflow:hidden;
+  max-width:1350px; min-height:298px; margin:16px auto 26px !important;
+  padding:48px 44px 38px !important; text-align:left !important;
+  border:1px solid #8527df !important; border-radius:17px !important;
+  background:linear-gradient(90deg,rgba(8,5,21,.98) 0%,rgba(12,5,28,.91) 34%,rgba(8,8,24,.25) 100%),url('https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1800&q=85') center 48%/cover !important;
+  box-shadow:0 0 25px #7b20d926,inset 0 0 30px #6c16bb18 !important;
+}
+.hero-kicker {font-size:10px;letter-spacing:3px;font-weight:900;color:#c7a4ff;margin-bottom:12px;}
+.site-hero h2 {
+  max-width:540px; color:#fff !important; font-size:clamp(30px,4vw,47px) !important;
+  line-height:1.08 !important; font-weight:1000 !important; letter-spacing:-1px;
+  text-shadow:0 3px 12px #000 !important; text-align:left !important;
+}
+.site-hero h2 em {font-style:italic;color:#e33bff;text-shadow:0 0 16px #d000ff88;}
+.site-hero p {margin:12px 0 17px !important;color:#d0c6df !important;font-size:13px !important;}
+.site-hero .play-button {margin:0 !important;padding:11px 17px !important;border-radius:8px !important;font-size:12px;}
+.menu-grid {display:none !important;}
+.page {max-width:1350px !important;padding:0 34px 60px !important;}
+.page-title {font-size:30px !important;font-weight:900 !important;margin:0 0 14px !important;padding-bottom:10px;border-bottom:1px solid #30203f;color:#f7f0ff !important;text-shadow:0 0 15px #8e28e966;}
+#games .cards {display:grid !important;grid-template-columns:repeat(5,minmax(0,1fr)) !important;gap:13px !important;}
+#games .card {
+  min-width:0; overflow:hidden; padding:6px 6px 12px !important;
+  display:flex;flex-direction:column;text-align:left !important;
+  border:1px solid #6522a8 !important;border-top:3px solid #c400e9 !important;
+  border-radius:12px !important;background:#080711 !important;
+  box-shadow:0 8px 22px #0007 !important;transition:transform .2s,border-color .2s,box-shadow .2s !important;
+}
+#games .card:hover {transform:translateY(-4px);border-color:#bc53ff !important;box-shadow:0 0 20px #7b1dbb44 !important;}
+#games .card-icon {
+  height:280px; min-height:220px; width:100%; flex:none; position:relative; overflow:hidden;
+  display:flex;align-items:flex-end;justify-content:flex-start;
+  margin:0 0 10px !important;padding:12px 9px !important;
+  border:1px solid #8242bc;border-radius:7px;font-size:0 !important;
+  background-size:cover !important;background-position:center !important;
+}
+#games .card-icon:after {content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(4,3,12,.95) 0%,rgba(4,3,12,.25) 55%,rgba(4,3,12,.02) 100%);pointer-events:none;}
+#games .card:nth-child(1) .card-icon {background-image:url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(2) .card-icon {background-image:url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(3) .card-icon {background-image:url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(4) .card-icon {background-image:url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(5) .card-icon {background-image:url('https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(6) .card-icon {background-image:url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(7) .card-icon {background-image:url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(8) .card-icon {background-image:url('https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(9) .card-icon {background-image:url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(10) .card-icon {background-image:url('https://images.unsplash.com/photo-1534258936925-c58bed479fcb?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(11) .card-icon {background-image:url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(12) .card-icon {background-image:url('https://images.unsplash.com/photo-1474302770737-173ee21bab63?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card:nth-child(13) .card-icon {background-image:url('https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=700&q=85') !important;}
+#games .card h3 {font-size:13px !important;line-height:1.35;margin:0 3px 7px !important;color:#fff !important;}
+#games .card p {font-size:10px !important;line-height:1.45;margin:0 3px 12px !important;color:#c7bdd8 !important;flex:1;}
+#games .play-button {width:100%;margin:0 !important;padding:10px 8px !important;color:white !important;background:linear-gradient(100deg,#7819d1,#c000e5) !important;border:1px solid #c754ff !important;border-radius:20px !important;font-size:12px !important;box-shadow:0 0 13px #9500ff24 !important;}
+#games .play-button:hover,.site-hero .play-button:hover {filter:brightness(1.18);box-shadow:0 0 18px #a100ff77 !important;}
+/* Keep the other pages and settings visually consistent without altering their behavior. */
+#series .card,#photos .card,#chat .card,#settings .card {background:#0e0b1b !important;border:1px solid #3f245c !important;color:#f7f1ff !important;}
+input,textarea,select {background:#100c1e !important;color:#fff !important;border-color:#563174 !important;}
+footer {background:#070611 !important;color:#b9abc9 !important;border-top:1px solid #482164;}
+@media(max-width:1000px){#games .cards{grid-template-columns:repeat(3,minmax(0,1fr)) !important;}.site-hero{margin-left:16px !important;margin-right:16px !important;}.page{padding-left:16px !important;padding-right:16px !important;}}
+@media(max-width:650px){header{height:auto !important;min-height:100px;}header nav{gap:4px;}header nav button{padding:8px 9px !important;font-size:10px !important;}.site-hero{min-height:250px;padding:30px 22px !important;}#games .cards{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:10px !important;}#games .card-icon{height:220px;min-height:190px;}.page-title{font-size:23px !important;}}
+
 </style>
 </head>
 
@@ -404,8 +558,10 @@ footer{background:rgba(5,10,18,.9)!important;border-top:1px solid rgba(25,181,25
 </nav>
 </header>
 <section class="site-hero">
-  <h2>👑 KING LEAGUE 2026</h2>
-  <p>Futbol, yarış ve eğlence tek menüde. Bir oyun seç ve hemen başla.</p>
+  <div class="hero-kicker">GAME ATARİ · OYUN MERKEZİ</div>
+  <h2>EN İYİ OYUNLAR<br><em>SENİ BEKLİYOR!</em></h2>
+  <p>Favori oyununu seç, maceraya hemen başla.</p>
+  <button class="play-button" onclick="showPage('games')">🎮 OYUNLARI KEŞFET</button>
 </section>
 <div class="menu-grid">
   <div class="menu-card">
@@ -431,14 +587,14 @@ footer{background:rgba(5,10,18,.9)!important;border-top:1px solid rgba(25,181,25
 </div>
 
 
-<section id="home" class="page active">
+<section id="home" class="page">
 <div class="hero">
 <h1>GAME ATARİ</h1>
 <p>Süper Lig Penaltı & Gelişmiş Hız Yarışı Güncellendi!</p>
 </div>
 </section>
 
-<section id="games" class="page">
+<section id="games" class="page active">
 <h2 class="page-title">🎮 Atari Oyun Salonu</h2>
 <div class="cards">
 <div class="card"><div class="card-icon">⚽</div><h3>Süper Lig Penaltı Düellosu</h3><p>Takım renklerinde formalı kaleciler ve özel efektler!</p><button class="play-button" onclick="startGame('football')">OYNA</button></div>
